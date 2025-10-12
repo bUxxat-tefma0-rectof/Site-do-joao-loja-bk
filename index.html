@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BK Clone - Pedido Rápido</title>
+<meta name="description" content="Loja demo inspirada em fast-food: cardápio visual, personalização, carrinho, envio ao WhatsApp, chat com voz e multi-idioma." />
+<style>
+  /* ====== Estilo básico, responsivo e "flat" ====== */
+  :root{
+    --bg:#FBF1E6;
+    --accent:#BD3B1A; /* marrom/avermelhado */
+    --accent-2:#E36A2A;
+    --card:#FFF6EE;
+    --muted:#9B7D6A;
+    --dark:#3b2218;
+    --radius:12px;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,var(--bg),#f6e8da);color:var(--dark)}
+  header{background:var(--accent);color:white;padding:18px 16px;border-bottom-left-radius:22px;border-bottom-right-radius:22px;display:flex;align-items:center;gap:12px}
+  header .logo{font-weight:800;font-size:28px;letter-spacing:1px}
+  .container{max-width:980px;margin:18px auto;padding:12px}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+  .menu-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .product{display:flex;flex-direction:column;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,0.04)}
+  .product img{height:150px;object-fit:cover;width:100%}
+  .p-body{padding:12px}
+  .p-body h4{margin:0 0 6px 0}
+  .p-body p{margin:0;color:var(--muted);font-size:13px}
+  .p-footer{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px dashed rgba(0,0,0,0.03)}
+  button{background:var(--accent);color:white;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+  button.ghost{background:white;color:var(--accent);border:1px solid rgba(0,0,0,0.06)}
+  .cart{position:sticky;top:20px}
+  .cart h3{margin:0 0 8px 0}
+  .cart-list{max-height:360px;overflow:auto}
+  .cart-item{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+  .qty{display:flex;gap:6px;align-items:center}
+  input[type="number"]{width:64px;padding:6px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
+  .section-title{font-size:22px;margin:8px 0;color:var(--accent);font-weight:700}
+  .small-muted{font-size:13px;color:var(--muted)}
+  .prefs{display:flex;flex-direction:column;gap:8px}
+  .promo{background:linear-gradient(90deg,#fff3e6,#fff6ee);padding:12px;border-radius:10px;border:1px dashed rgba(0,0,0,0.03)}
+  /* Chat widget */
+  .chat-widget{position:fixed;right:18px;bottom:18px;width:340px;max-width:92vw;border-radius:12px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,0.18);background:white;z-index:999}
+  .chat-head{background:var(--accent);color:white;padding:10px;display:flex;align-items:center;gap:8px}
+  .chat-body{height:340px;overflow:auto;padding:10px;background:linear-gradient(180deg,#fff,#fffaf0)}
+  .chat-input{display:flex;gap:8px;padding:8px;border-top:1px solid rgba(0,0,0,0.06)}
+  .message{margin:8px 0;display:flex}
+  .bot{justify-content:flex-start}
+  .user{justify-content:flex-end}
+  .bubble{max-width:78%;padding:8px 12px;border-radius:14px;background:#f2f2f2}
+  .bubble.bot{background: #fff}
+  .lang-select{width:100%}
+  /* small helpers */
+  .muted{color:var(--muted)}
+  .row{display:flex;gap:8px;align-items:center}
+  .center{text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div style="width:40px;height:40px;border-radius:8px;background:white;display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800">BK</div>
+  <div>
+    <div class="logo">BURGER WY</div>
+    <div style="font-size:13px;color:#ffd9c9">Faça do Seu Jeito — Pedido rápido</div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="grid">
+    <!-- Left column: cardapio -->
+    <div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="section-title">Cardápio</div>
+            <div class="small-muted">Categorias: Hambúrgueres • Acompanhamentos • Sobremesas • Bebidas</div>
+          </div>
+          <div style="width:220px">
+            <select id="filterCategory" class="lang-select" aria-label="Filtrar categoria">
+              <option value="all">Todas as categorias</option>
+              <option value="burgers">Hambúrgueres</option>
+              <option value="sides">Acompanhamentos</option>
+              <option value="dessert">Sobremesas</option>
+              <option value="drinks">Bebidas</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" id="promoArea" class="promo">
+          <strong>Promoção do dia:</strong> Combo Família - 3 hambúrgueres + 2 batatas por R$39,90 <button class="ghost" onclick="applyPromo()">Aplicar</button>
+        </div>
+
+        <div style="margin-top:12px" class="menu-list" id="menuList" aria-live="polite">
+          <!-- Produtos gerados por JS -->
+        </div>
+      </div>
+
+      <!-- Informações extras / Nutrição / Localizador -->
+      <div class="card" style="margin-top:14px">
+        <div class="section-title">Uso e Privacidade</div>
+        <p class="small-muted">Mostramos informações nutricionais por produto e respeitamos seus dados.</p>
+
+        <div style="margin-top:12px">
+          <div class="section-title" style="font-size:18px">Localizador de lojas</div>
+          <p class="small-muted">Encontre a unidade mais próxima. (Clique em "Abrir mapa" para usar o Google Maps)</p>
+          <div class="row" style="margin-top:8px">
+            <input id="addressSearch" placeholder="Cidade, endereço ou CEP" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+            <button onclick="openMap()">Abrir mapa</button>
+          </div>
+          <p class="small-muted" style="margin-top:6px">Sugestão: para mapa com rotas e pesquisa automática você deve adicionar uma chave do Google Maps (veja instruções).</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="section-title">Informações nutricionais</div>
+        <p class="small-muted">Clique em um produto para ver ingredientes e tabela nutricional.</p>
+        <div id="nutritionModal" style="display:none;padding:8px;margin-top:8px;border-radius:8px;background:#fff6f0"></div>
+      </div>
+    </div>
+
+    <!-- Right column: carrinho e prefs -->
+    <aside class="cart">
+      <div class="card">
+        <h3>Carrinho <span class="small-muted" id="cartCount">(0)</span></h3>
+        <div class="cart-list" id="cartList" aria-live="polite">
+          <p class="small-muted">Seu carrinho está vazio.</p>
+        </div>
+
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <div style="flex:1">
+            <input id="addressInput" placeholder="Endereço de entrega (salvar local)" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+          </div>
+          <button onclick="saveAddress()">Salvar</button>
+        </div>
+
+        <div style="margin-top:8px">
+          <div class="row">
+            <div style="flex:1">
+              <label class="small-muted">Validar horário do restaurante:</label>
+              <select id="storeSchedule" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)">
+                <option value="0-23">Aberto 24h</option>
+                <option value="9-22">09:00 - 22:00</option>
+                <option value="10-20">10:00 - 20:00</option>
+              </select>
+            </div>
+            <button onclick="checkOpen()">Verificar</button>
+          </div>
+          <div id="openResult" class="small-muted" style="margin-top:8px"></div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="small-muted">Subtotal</div>
+              <div id="subtotal">R$ 0,00</div>
+            </div>
+            <div>
+              <div class="small-muted">Frete</div>
+              <div id="shipping">R$ 0,00</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button onclick="openCheckout()" style="flex:1">Pagar</button>
+            <button class="ghost" onclick="sendToWhatsapp()">Enviar WhatsApp</button>
+          </div>
+          <div class="small-muted" style="margin-top:8px">Você pode editar itens no carrinho, personalizar ingredientes ao clicar em um produto.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="section-title">Promoções & Preferências</div>
+        <div class="prefs">
+          <label><input type="checkbox" id="acceptNews" /> Receber ofertas via WhatsApp</label>
+          <label><input type="checkbox" id="useLocation" /> Usar geolocalização para localizar loja</label>
+          <label style="font-size:13px;color:var(--muted)">Notificações e geolocalização requerem permissão do navegador.</label>
+          <button onclick="applyPrefs()">Salvar Preferências</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="section-title">Checkout rápido</div>
+        <p class="small-muted">No cliente demo, o botão "Pagar" abre opções: Pagamento fictício, Pix QR (gerado no cliente) ou abrir Stripe Checkout (requer sua chave).</p>
+        <div style="display:flex;gap:8px">
+          <button onclick="checkoutPix()">Gerar Pix (QR)</button>
+          <button onclick="checkoutStripe()">Stripe</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- Chat widget -->
+<div class="chat-widget" id="chatWidget" aria-hidden="false">
+  <div class="chat-head">
+    <div style="width:36px;height:36px;border-radius:8px;background:white;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800">BK</div>
+    <div>
+      <div style="font-weight:700">Assistente</div>
+      <div class="small-muted">Pergunte em texto, voz ou mude o idioma</div>
+    </div>
+  </div>
+  <div class="chat-body" id="chatBody" role="log" aria-live="polite"></div>
+
+  <div style="padding:8px;display:flex;gap:8px;align-items:center">
+    <select id="chatLang" class="lang-select" onchange="setChatLang()">
+      <option value="pt">Português (PT-BR)</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="fr">Français</option>
+      <!-- mais idiomas podem ser adicionados -->
+    </select>
+    <button id="voiceBtn" title="Gravar / Falar" onclick="toggleVoice()">🎤</button>
+  </div>
+
+  <div style="padding:8px;border-top:1px solid rgba(0,0,0,0.06);display:flex;gap:8px" class="chat-input">
+    <input id="chatInput" placeholder="Escreva aqui..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+    <button onclick="sendChat()">Enviar</button>
+  </div>
+</div>
+
+<script>
+/* ========== Dados do cardápio (exemplo) ========== */
+const PRODUCTS = [
+  { id: 'b1', name:'Whopper Clássico', cat:'burgers', price:25.9, img:'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=bdc7a0c25a1b4d0f8f5b8bae3b4da6a9', desc:'Pão, 2 carnes, alface, tomate, maionese secreta.', nutrition:'560 kcal; Gorduras: 35g; Proteínas: 28g' },
+  { id: 'b2', name:'Cheese Bacon', cat:'burgers', price:27.5, img:'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=bdc7a0c25a1b4d0f8f5b8bae3b4da6a9', desc:'Queijo derretido, bacon crocante.', nutrition:'610 kcal; Gorduras: 38g; Proteínas: 30g' },
+  { id: 's1', name:'Batata Média', cat:'sides', price:7.9, img:'https://images.unsplash.com/photo-1604908177522-5fcf7f8a3b08?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=b1e5d3f3b5a2f8d2', desc:'Porção média crocante.' , nutrition:'320 kcal; Gorduras: 16g; Carboidratos: 40g' },
+  { id: 'd1', name:'Cheesecake', cat:'dessert', price:9.0, img:'https://images.unsplash.com/photo-1505250469679-203ad9ced0cb?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=047a3a6a9d8b2a2e', desc:'Cheesecake cremosa com calda.' , nutrition:'420 kcal; Açúcares: 28g' },
+  { id: 'dr1', name:'Refrigerante 350ml', cat:'drinks', price:5.5, img:'https://images.unsplash.com/photo-1571687949923-2b6d4a0db1f5?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=07b9a2f5f8f0c4d6', desc:'Gelo incluso.' , nutrition:'140 kcal; Açúcares: 35g' }
+];
+
+/* ========== Estado local ========== */
+let CART = JSON.parse(localStorage.getItem('bk_cart')||'[]');
+let USER_ADDR = localStorage.getItem('bk_addr') || '';
+let PREFS = JSON.parse(localStorage.getItem('bk_prefs')||'{}');
+
+/* ========== Renderização do cardápio ========== */
+const menuList = document.getElementById('menuList');
+function renderMenu(filter='all'){
+  menuList.innerHTML='';
+  const items = PRODUCTS.filter(p => filter==='all' || p.cat===filter);
+  items.forEach(p=>{
+    const el = document.createElement('div');
+    el.className='product';
+    el.innerHTML = `
+      <img src="${p.img}" alt="${p.name}">
+      <div class="p-body">
+        <h4>${p.name} <small style="color:var(--muted);font-weight:600">R$ ${p.price.toFixed(2)}</small></h4>
+        <p>${p.desc}</p>
+      </div>
+      <div class="p-footer">
+        <div style="display:flex;gap:8px;align-items:center">
+          <button onclick='openProduct("${p.id}")' class="ghost">Detalhes</button>
+        </div>
+        <div>
+          <button onclick='addToCart("${p.id}")'>Adicionar</button>
+        </div>
+      </div>
+    `;
+    menuList.appendChild(el);
+  });
+}
+renderMenu();
+
+/* Filtro categoria */
+document.getElementById('filterCategory').addEventListener('change', e=>{
+  renderMenu(e.target.value);
+});
+
+/* ========== Carrinho ========== */
+function saveCart(){
+  localStorage.setItem('bk_cart', JSON.stringify(CART));
+  renderCart();
+}
+function addToCart(productId){
+  const prod = PRODUCTS.find(p=>p.id===productId);
+  if(!prod) return;
+  const existing = CART.find(c=>c.id===productId);
+  if(existing) existing.qty++;
+  else CART.push({id:productId, qty:1, custom: []});
+  saveCart();
+  showToast(`${prod.name} adicionado ao carrinho`);
+}
+function removeFromCart(productId){
+  CART = CART.filter(c=>c.id!==productId);
+  saveCart();
+}
+function updateQty(productId, qty){
+  const item = CART.find(c=>c.id===productId);
+  if(!item) return;
+  item.qty = Math.max(0, Math.floor(qty));
+  if(item.qty===0) removeFromCart(productId);
+  saveCart();
+}
+function renderCart(){
+  const list = document.getElementById('cartList');
+  const count = CART.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartCount').textContent = `(${count})`;
+  if(CART.length===0){ list.innerHTML = '<p class="small-muted">Seu carrinho está vazio.</p>'; updateTotals(); return; }
+  list.innerHTML = '';
+  CART.forEach(it=>{
+    const prod = PRODUCTS.find(p=>p.id===it.id);
+    const div = document.createElement('div');
+    div.className='cart-item';
+    div.innerHTML = `
+      <div style="flex:1">
+        <div style="font-weight:700">${prod.name}</div>
+        <div class="small-muted">R$ ${prod.price.toFixed(2)}</div>
+      </div>
+      <div class="qty">
+        <button class="ghost" onclick='updateQty("${it.id}", ${it.qty-1})'>-</button>
+        <input type="number" min=0 value="${it.qty}" onchange='updateQty("${it.id}", this.value)' aria-label="Quantidade de ${prod.name}" />
+        <button class="ghost" onclick='updateQty("${it.id}", ${it.qty+1})'>+</button>
+        <button class="ghost" onclick='removeFromCart("${it.id}")' title="Remover">🗑️</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+  updateTotals();
+}
+renderCart();
+
+function updateTotals(){
+  const subtotal = CART.reduce((s,it)=>{
+    const p = PRODUCTS.find(x=>x.id===it.id);
+    return s + (p.price * it.qty);
+  },0);
+  document.getElementById('subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+  // shipping logic: if PREFS.useLocation true try geolocation to estimate free shipping; else flat.
+  let shipping = 0;
+  if(subtotal >= 80) shipping = 0; else shipping = 7.50;
+  document.getElementById('shipping').textContent = `R$ ${shipping.toFixed(2)}`;
+}
+updateTotals();
+
+/* ========== Produto detalhe / customização ========== */
+function openProduct(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  const modal = document.getElementById('nutritionModal');
+  modal.style.display='block';
+  modal.innerHTML = `<strong>${p.name}</strong>
+    <p class="small-muted">${p.desc}</p>
+    <p><strong>Informações nutricionais:</strong><br>${p.nutrition}</p>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button onclick='addToCart("${p.id}")'>Adicionar ao carrinho</button>
+      <button class="ghost" onclick="closeNutrition()">Fechar</button>
+    </div>`;
+}
+function closeNutrition(){ document.getElementById('nutritionModal').style.display='none'; }
+
+/* ========== Endereço ========== */
+document.getElementById('addressInput').value = USER_ADDR;
+function saveAddress(){
+  USER_ADDR = document.getElementById('addressInput').value.trim();
+  if(!USER_ADDR){ alert('Digite um endereço válido.'); return; }
+  localStorage.setItem('bk_addr', USER_ADDR);
+  showToast('Endereço salvo');
+}
+
+/* ========== Loja aberta? (validação local baseada em horário) ========== */
+function checkOpen(){
+  const sel = document.getElementById('storeSchedule').value;
+  const [start,end] = sel.split('-').map(Number);
+  const now = new Date();
+  const hour = now.getHours();
+  const open = start <= end ? (hour >= start && hour < end) : (hour >= start || hour < end);
+  document.getElementById('openResult').textContent = open ? 'Restaurante está ABERTO agora ✅' : 'Restaurante está FECHADO agora ⛔';
+}
+
+/* ========== Enviar pedido para WhatsApp (abre o app com mensagem pronta) ========== */
+/* O usuário pediu: "Enviar pedido para o whatsapp ou seja meu número" — aqui abrimos o WhatsApp com mensagem. 
+   Se desejar enviar para um número específico, altere `WHATSAPP_PHONE` no começo da função (formato internacional sem + e com DDI). */
+function sendToWhatsapp(){
+  if(CART.length===0){ alert('Carrinho vazio.'); return; }
+  const WHATSAPP_PHONE = prompt('Digite o número (DDI + DDD + número) para onde enviar (ex: 5511999998888):') || '';
+  if(!WHATSAPP_PHONE){ alert('Número não informado.'); return; }
+  const itemsText = CART.map(it=>{
+    const p = PRODUCTS.find(x=>x.id===it.id);
+    return `${it.qty}x ${p.name} - R$ ${ (p.price*it.qty).toFixed(2) }`;
+  }).join('\n');
+  const subtotal = CART.reduce((s,it)=>s + PRODUCTS.find(p=>p.id===it.id).price*it.qty, 0);
+  const shipping = parseFloat(document.getElementById('shipping').textContent.replace('R$','')) || 0;
+  const total = subtotal + shipping;
+  const addr = localStorage.getItem('bk_addr') || 'Sem endereço';
+  let msg = `Pedido desde web: \n${itemsText}\nEndereço: ${addr}\nSubtotal: R$ ${subtotal.toFixed(2)}\nFrete: R$ ${shipping.toFixed(2)}\nTotal: R$ ${total.toFixed(2)}\nObservações: `;
+  // urlencode
+  const encoded = encodeURIComponent(msg);
+  const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encoded}`;
+  window.open(url, '_blank');
+}
+
+/* ========== Checkout / Pagamentos (clientes) ========== */
+function openCheckout(){
+  // simples modal: oferecer opções
+  const opt = prompt('Pagamento: digite 1 para Pix (QR gerado), 2 para Stripe (requer chave), 3 para simular pagamento');
+  if(opt==='1') checkoutPix();
+  else if(opt==='2') checkoutStripe();
+  else if(opt==='3') { alert('Pagamento simulado! (em produção: integrar gateway)'); }
+}
+
+/* Gerar QR Code Pix no cliente: cria um código de texto (não é uma cobrança bancária real) */
+function checkoutPix(){
+  const chave = prompt('Chave PIX do recebedor (ex: seuemail@dominio.com):','seu@pix.exemplo');
+  if(!chave) return alert('Chave PIX necessária.');
+  const subtotal = CART.reduce((s,it)=>s + PRODUCTS.find(p=>p.id===it.id).price*it.qty, 0);
+  const shipping = parseFloat(document.getElementById('shipping').textContent.replace('R$','')) || 0;
+  const total = (subtotal + shipping).toFixed(2).replace('.',',');
+  // Gerar payload simples (APENAS EXEMPLO). Em produção gere pelo seu PSP e valida com backend.
+  const pixPayload = `***PIX_EXEMPLO***\nChave: ${chave}\nValor: R$ ${total}\nDescrição: Pedido web`;
+  // Mostrar QR (usando Google Chart API para QR simples - sem chaves)
+  const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=250x250&chl=${encodeURIComponent(pixPayload)}`;
+  const win = window.open('', '_blank');
+  win.document.write(`<h3>QR Code PIX (apenas demonstrativo)</h3><p>Valor: R$ ${total}</p><img src="${qrUrl}" alt="QR PIX"><p>Em produção: gere um payload PIX real no seu servidor.</p>`);
+}
+
+/* Stripe Checkout: apenas redireciona para um checkout se você colocar a URL do seu backend que cria a sessão */
+function checkoutStripe(){
+  const yourBackendUrl = prompt('Cole a URL do seu backend que cria a sessão Stripe (ex: https://meusite.com/create-checkout):');
+  if(!yourBackendUrl) return alert('URL do backend necessária para Stripe.');
+  // Neste exemplo, apenas abrimos a URL (em produção você deve POST os items e receber session id)
+  window.open(yourBackendUrl, '_blank');
+}
+
+/* ========== Promoções ========== */
+function applyPromo(){ showToast('Promoção aplicada: Combo Família'); /* implemente desconto real no backend */ }
+
+/* ========== Preferências ========== */
+function applyPrefs(){
+  PREFS.useLocation = document.getElementById('useLocation').checked;
+  PREFS.acceptNews = document.getElementById('acceptNews').checked;
+  localStorage.setItem('bk_prefs', JSON.stringify(PREFS));
+  showToast('Preferências salvas');
+}
+
+/* ========== Localizador de lojas: abre Google Maps com o termo buscado ========== */
+function openMap(){
+  const q = document.getElementById('addressSearch').value || 'Burger King near me';
+  // Abre google maps com a query (funciona sem API key). Para integração avançada use Google Maps JS + API KEY.
+  const url = `https://www.google.com/maps/search/${encodeURIComponent(q)}`;
+  window.open(url, '_blank');
+}
+
+/* ========== Notificações / Geolocation ========== */
+if(PREFS.useLocation && 'geolocation' in navigator){
+  navigator.geolocation.getCurrentPosition(pos=>{
+    console.log('user location',pos.coords);
+  }, err => console.warn(err));
+}
+
+/* ========== Utilitários: toast simples ========== */
+function showToast(msg){
+  const d = document.createElement('div');
+  d.textContent = msg;
+  d.style = 'position:fixed;left:50%;transform:translateX(-50%);bottom:80px;background:var(--dark);color:white;padding:10px 14px;border-radius:10px;z-index:9999';
+  document.body.appendChild(d);
+  setTimeout(()=>d.style.opacity=0,2200);
+  setTimeout(()=>d.remove(),2600);
+}
+
+/* ========== Chat robotizado (voz + multi-idioma local) ========== */
+/* - Usa Web Speech API para reconhecimento de fala (se o navegador suportar)
+   - Usa SpeechSynthesis para resposta (TTS).
+   - Chatbot é rule-based local para perguntas sobre cardápio, pedido, horário, endereço.
+   - Para inteligência real: conecte a um serviço (OpenAI / Dialogflow) no backend.
+*/
+const chatBody = document.getElementById('chatBody');
+const chatInput = document.getElementById('chatInput');
+let CHAT_LANG = 'pt';
+function setChatLang(){ CHAT_LANG = document.getElementById('chatLang').value; speakText(getGreeting(), CHAT_LANG); }
+function appendMessage(text, who='bot'){
+  const div = document.createElement('div'); div.className = 'message ' + (who==='bot' ? 'bot' : 'user');
+  const b = document.createElement('div'); b.className = 'bubble ' + (who==='bot' ? 'bot' : 'user'); b.textContent = text;
+  div.appendChild(b); chatBody.appendChild(div); chatBody.scrollTop = chatBody.scrollHeight;
+}
+function sendChat(){
+  const q = chatInput.value.trim();
+  if(!q) return;
+  appendMessage(q, 'user');
+  chatInput.value='';
+  botRespond(q);
+}
+function botRespond(q){
+  // rule-based with multi-language patterns
+  const key = q.toLowerCase();
+  if(/(cardápio|cardapio|menu|produtos)/i.test(key) || /menu|products|cardapio|cardápio/i.test(q)){
+    const list = PRODUCTS.map(p=>`${p.name} - R$ ${p.price.toFixed(2)}`).join('\n');
+    const resp = translateResponse({pt:`Aqui está nosso cardápio:\n${list}`, en:`Here's our menu:\n${list}`, es:`Aquí está nuestro menú:\n${list}`});
+    appendMessage(resp, 'bot'); speakText(resp, CHAT_LANG);
+    return;
+  }
+  if(/(horário|aberto|fechado|horario)/i.test(key) || /open|closed|hours/i.test(q)){
+    const sel = document.getElementById('storeSchedule').value;
+    const r = document.getElementById('openResult').textContent || 'Verifique horário';
+    const resp = translateResponse({pt:`${r}`, en:`${r}`, es:`${r}`});
+    appendMessage(resp,'bot'); speakText(resp, CHAT_LANG);
+    return;
+  }
+  if(/(pedido|carrinho|checkout)/i.test(key) || /order|cart|checkout/i.test(q)){
+    const subtotal = CART.reduce((s,it)=>s + PRODUCTS.find(p=>p.id===it.id).price*it.qty, 0).toFixed(2);
+    const resp = translateResponse({pt:`Seu carrinho tem ${CART.length} tipos de itens, subtotal R$ ${subtotal}`, en:`Your cart has ${CART.length} item types, subtotal R$ ${subtotal}`, es:`Tu carrito tiene ${CART.length} tipos de artículos, subtotal R$ ${subtotal}`});
+    appendMessage(resp,'bot'); speakText(resp, CHAT_LANG);
+    return;
+  }
+  // fallback
+  const resp = translateResponse({
+    pt: "Desculpe, não entendi. Posso mostrar o cardápio, verificar horário ou enviar o pedido por WhatsApp.",
+    en: "Sorry, I didn't get that. I can show the menu, check hours or send the order by WhatsApp.",
+    es: "Lo siento, no entendí. Puedo mostrar el menú, verificar el horario o enviar el pedido por WhatsApp."
+  });
+  appendMessage(resp,'bot'); speakText(resp, CHAT_LANG);
+}
+function translateResponse(map){
+  return map[CHAT_LANG] || map['pt'];
+}
+function getGreeting(){
+  return {pt:'Olá! Eu sou o assistente. Pergunte sobre o cardápio ou peça ajuda.', en:'Hello! I am the assistant. Ask about the menu or request help.'}[CHAT_LANG] || '';
+}
+setTimeout(()=>appendMessage(getGreeting(), 'bot'),600);
+
+/* Speech recognition */
+let recognizing=false;
+let recognition;
+function toggleVoice(){
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){
+    alert('Reconhecimento de voz não suportado neste navegador.');
+    return;
+  }
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!recognition){
+    recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    recognition.interimResults = false;
+    recognition.onresult = (e)=>{
+      const text = e.results[0][0].transcript;
+      appendMessage(text,'user');
+      botRespond(text);
+    };
+    recognition.onend = ()=>{ recognizing=false; document.getElementById('voiceBtn').textContent='🎤'; }
+  }
+  if(!recognizing){ recognition.lang = CHAT_LANG === 'pt' ? 'pt-BR' : (CHAT_LANG==='en'?'en-US':CHAT_LANG==='es'?'es-ES':'pt-BR'); recognition.start(); recognizing=true; document.getElementById('voiceBtn').textContent='⏺️'; }
+  else { recognition.stop(); recognizing=false; document.getElementById('voiceBtn').textContent='🎤'; }
+}
+
+/* Text-to-speech */
+function speakText(txt, lang='pt'){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = lang === 'pt' ? 'pt-BR' : (lang==='en'?'en-US':(lang==='es'?'es-ES':lang));
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+/* ========== Acessibilidade: permitir envio por tecla Enter no chat ========== */
+chatInput.addEventListener('keydown', e => { if(e.key==='Enter') sendChat(); });
+
+/* ========== Inicializações ========== */
+document.getElementById('addressInput').value = USER_ADDR;
+document.getElementById('useLocation').checked = PREFS.useLocation || false;
+document.getElementById('acceptNews').checked = PREFS.acceptNews || false;
+
+/* ========== Rastreio em tempo real (nota) ==========
+   Funcionalidade real de rastreamento exige backend + websockets / push.
+   Aqui deixamos esqueleto: função para iniciar poll se você fornecer uma API `GET /status?orderId=...`
+*/
+async function startOrderTracking(orderId, statusEndpoint){
+  if(!statusEndpoint) return alert('Forneça endpoint de status.');
+  // Exemplo: polling de 10s (em produção use websockets)
+  const poll = setInterval(async ()=>{
+    try{
+      const res = await fetch(`${statusEndpoint}?orderId=${encodeURIComponent(orderId)}`);
+      if(!res.ok) { console.warn('status fetch failed'); return; }
+      const data = await res.json();
+      // esperar que a API retorne {status: 'preparing'|'on_the_way'|'delivered', location: {lat,lon}}
+      appendMessage(`Status do pedido: ${data.status}`, 'bot');
+      if(data.status === 'delivered') clearInterval(poll);
+    }catch(err){ console.error(err); }
+  }, 10000);
+  return poll;
+}
+
+/* ========== Suporte a Libras / Acessibilidade para surdos ==========
+   Exigir tradução em Libras (vídeo com intérprete) não é trivial no cliente. 
+   Solução prática: adicionar botão "Pedir vídeo em Libras" que carrega um vídeo de interpretação (pré-gravado)
+   — você deve fornecer os vídeos .mp4 ou um serviço que gere interpretação. Aqui abrimos campo para upload.
+*/
+function requestLibras(){
+  alert('Para suporte em Libras, carregue seu vídeo de interpretação no painel do administrador e vincule aqui. Em produção, conecte um serviço de intérprete de Libras.');
+}
+
+/* ========== Segurança e privacidade: lembrete ==========
+   Este projeto roda inteiramente no navegador. Não guarde dados sensíveis em localStorage em produção.
+*/
+
+</script>
+</body>
+</html>

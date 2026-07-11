@@ -1,166 +1,410 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LojaPro - Plataforma Completa</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', system-ui, sans-serif; }
-        .hero-bg { background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.55)), url('https://picsum.photos/id/1015/1920/1080'); }
-        .modal { animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    </style>
+    <meta name="description" content="Sua plataforma completa - Os melhores serviços digitais">
+    <title>Plataforma Digital - Serviços Profissionais</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-50 text-gray-900">
-
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl">LP</div>
-                <span class="text-3xl font-bold tracking-tight">LojaPro</span>
+<body>
+    <!-- Header / Menu -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/180x50/6C63FF/ffffff?text=MINHA+MARCA" alt="Logo" class="logo-img">
             </div>
-            
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                <a href="#" onclick="navigateTo('home')" class="hover:text-blue-600 transition-colors">Início</a>
-                <a href="#" onclick="navigateTo('loja')" class="hover:text-blue-600 transition-colors">Loja</a>
-                <a href="#planos" class="hover:text-blue-600 transition-colors">Planos</a>
-                <a href="#" onclick="showPanel()" class="hover:text-blue-600 transition-colors">Painel</a>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#planos">Planos</a></li>
+                    <li><a href="#avaliacoes">Avaliações</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#parceiros">Parceiros</a></li>
+                </ul>
+            </nav>
+            <div class="header-buttons">
+                <a href="login.html" class="btn btn-outline">Entrar</a>
+                <a href="cadastro.html" class="btn btn-primary">Cadastrar</a>
             </div>
-
-            <div class="flex items-center gap-4">
-                <button onclick="showModal('login-modal')" class="px-6 py-2.5 text-sm font-semibold hover:bg-gray-100 rounded-2xl transition">Entrar</button>
-                <button onclick="showModal('cadastro-modal')" class="px-7 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl transition">Cadastrar</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- WhatsApp Flutuante -->
-    <a href="https://wa.me/5511999999999" target="_blank" 
-       class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-2xl hover:scale-110 transition z-50">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
-    <!-- Hero -->
-    <header id="home" class="hero-bg h-screen bg-cover bg-center flex items-center text-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="max-w-2xl">
-                <h1 class="text-6xl md:text-7xl font-bold leading-tight mb-6">Sua loja digital<br>pronta em minutos</h1>
-                <p class="text-xl text-blue-100 mb-10">Cadastro, login, painel do cliente, loja completa e admin poderoso.</p>
-                <button onclick="navigateTo('loja')" 
-                        class="px-10 py-4 bg-white text-blue-900 font-semibold rounded-3xl text-lg hover:scale-105 transition">Explorar Loja</button>
+            <div class="menu-mobile">
+                <i class="fas fa-bars"></i>
             </div>
         </div>
     </header>
 
-    <!-- Seção Loja (simulada) -->
-    <section id="loja" class="py-20 bg-white hidden">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-4xl font-bold mb-10 text-center">Loja</h2>
-            <div class="grid md:grid-cols-4 gap-8">
-                <div class="border rounded-3xl overflow-hidden hover:shadow-xl transition">
-                    <img src="https://picsum.photos/id/20/400/250" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="font-semibold">Curso de React Avançado</h3>
-                        <p class="text-2xl font-bold text-blue-600 mt-2">R$ 97</p>
-                        <button onclick="addToCart()" class="mt-6 w-full py-3 bg-blue-600 text-white rounded-2xl">Adicionar ao Carrinho</button>
+    <!-- Banner / Carrossel -->
+    <section class="banner" id="home">
+        <div class="carousel">
+            <div class="carousel-slide active">
+                <div class="carousel-content">
+                    <span class="badge">🚀 NOVO</span>
+                    <h1>Transforme seu negócio digital</h1>
+                    <p>Soluções completas para impulsionar seus resultados com tecnologia de ponta</p>
+                    <div class="carousel-buttons">
+                        <a href="#planos" class="btn btn-primary btn-lg">Começar agora</a>
+                        <a href="#servicos" class="btn btn-outline btn-lg">Saiba mais</a>
                     </div>
                 </div>
-                <!-- Repita cards conforme necessário -->
+                <div class="carousel-image">
+                    <img src="https://via.placeholder.com/600x400/6C63FF/ffffff?text=Banner+1" alt="Banner 1">
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <div class="carousel-content">
+                    <span class="badge">🔥 OFERTA</span>
+                    <h1>Planos a partir de R$29,90</h1>
+                    <p>Aproveite nossos preços especiais de lançamento</p>
+                    <div class="carousel-buttons">
+                        <a href="#planos" class="btn btn-primary btn-lg">Ver planos</a>
+                        <a href="#" class="btn btn-outline btn-lg">Fale conosco</a>
+                    </div>
+                </div>
+                <div class="carousel-image">
+                    <img src="https://via.placeholder.com/600x400/FF6B6B/ffffff?text=Banner+2" alt="Banner 2">
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <div class="carousel-content">
+                    <span class="badge">⭐ PREMIUM</span>
+                    <h1>Suporte 24 horas</h1>
+                    <p>Equipe especializada pronta para te atender</p>
+                    <div class="carousel-buttons">
+                        <a href="#planos" class="btn btn-primary btn-lg">Assinar premium</a>
+                        <a href="#" class="btn btn-outline btn-lg">Contato</a>
+                    </div>
+                </div>
+                <div class="carousel-image">
+                    <img src="https://via.placeholder.com/600x400/4ECDC4/ffffff?text=Banner+3" alt="Banner 3">
+                </div>
+            </div>
+            <button class="carousel-btn prev">❮</button>
+            <button class="carousel-btn next">❯</button>
+            <div class="carousel-dots">
+                <span class="dot active" data-slide="0"></span>
+                <span class="dot" data-slide="1"></span>
+                <span class="dot" data-slide="2"></span>
             </div>
         </div>
     </section>
 
-    <!-- Planos (mantido da versão anterior) -->
-    <section id="planos" class="py-24 bg-gray-50">
-        <!-- ... (mesmo conteúdo da versão anterior - omitido aqui por brevidade) ... -->
-        <div class="text-center">
-            <p class="text-2xl">Planos completos (veja versão anterior)</p>
+    <!-- Serviços em Destaque -->
+    <section class="servicos" id="servicos">
+        <div class="container">
+            <h2 class="section-title">Nossos Serviços</h2>
+            <p class="section-subtitle">Soluções completas para o seu negócio</p>
+            <div class="servicos-grid">
+                <div class="servico-card">
+                    <div class="servico-icon">💻</div>
+                    <h3>Desenvolvimento Web</h3>
+                    <p>Sites e sistemas personalizados com as melhores tecnologias do mercado</p>
+                    <a href="#" class="btn-link">Saiba mais →</a>
+                </div>
+                <div class="servico-card">
+                    <div class="servico-icon">📱</div>
+                    <h3>Aplicativos Mobile</h3>
+                    <p>Apps nativos para iOS e Android com experiência incrível</p>
+                    <a href="#" class="btn-link">Saiba mais →</a>
+                </div>
+                <div class="servico-card">
+                    <div class="servico-icon">🤖</div>
+                    <h3>Inteligência Artificial</h3>
+                    <p>Soluções com IA para automatizar e otimizar seus processos</p>
+                    <a href="#" class="btn-link">Saiba mais →</a>
+                </div>
+                <div class="servico-card">
+                    <div class="servico-icon">📊</div>
+                    <h3>Marketing Digital</h3>
+                    <p>Estratégias completas para aumentar suas vendas online</p>
+                    <a href="#" class="btn-link">Saiba mais →</a>
+                </div>
+                <div class="servico-card">
+                    <div class="servico-icon">🔒</div>
+                    <h3>Segurança Digital</h3>
+                    <p>Proteção completa para seus dados e sistemas</p>
+                    <a href="#" class="btn-link">Saiba mais →</a>
+                </div>
+                <div class="servico-card">
+                    <div class="servico-icon">☁️</div>
+                    <h3>Cloud Computing</h3>
+                    <p>Infraestrutura em nuvem escalável e segura</p>
+                    <a href="#" class="btn-link">Saiba mais →</a>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Painel do Cliente Simulado -->
-    <section id="painel-section" class="py-20 bg-gray-900 text-white hidden">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex justify-between items-center mb-10">
-                <h2 class="text-4xl font-bold">Painel do Cliente</h2>
-                <button onclick="hidePanel()" class="text-gray-400 hover:text-white">Sair</button>
+    <!-- Planos -->
+    <section class="planos" id="planos">
+        <div class="container">
+            <h2 class="section-title">Nossos Planos</h2>
+            <p class="section-subtitle">Escolha o plano ideal para você</p>
+            <div class="planos-grid">
+                <div class="plano-card">
+                    <div class="plano-header">
+                        <h3>Básico</h3>
+                        <div class="plano-preco">
+                            <span class="preco">R$29,90</span>
+                            <span class="periodo">/mês</span>
+                        </div>
+                    </div>
+                    <ul class="plano-features">
+                        <li><i class="fas fa-check"></i> 1 Projeto</li>
+                        <li><i class="fas fa-check"></i> Suporte por email</li>
+                        <li><i class="fas fa-check"></i> 5GB Armazenamento</li>
+                        <li><i class="fas fa-check"></i> Relatórios básicos</li>
+                        <li><i class="fas fa-times"></i> API acesso</li>
+                        <li><i class="fas fa-times"></i> Customização</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary btn-block">Comprar agora</a>
+                </div>
+                <div class="plano-card plano-destaque">
+                    <span class="plano-tag">MAIS POPULAR</span>
+                    <div class="plano-header">
+                        <h3>Profissional</h3>
+                        <div class="plano-preco">
+                            <span class="preco">R$99,90</span>
+                            <span class="periodo">/mês</span>
+                        </div>
+                    </div>
+                    <ul class="plano-features">
+                        <li><i class="fas fa-check"></i> 5 Projetos</li>
+                        <li><i class="fas fa-check"></i> Suporte prioritário</li>
+                        <li><i class="fas fa-check"></i> 50GB Armazenamento</li>
+                        <li><i class="fas fa-check"></i> Relatórios avançados</li>
+                        <li><i class="fas fa-check"></i> API acesso</li>
+                        <li><i class="fas fa-times"></i> White label</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary btn-block">Comprar agora</a>
+                </div>
+                <div class="plano-card">
+                    <div class="plano-header">
+                        <h3>Enterprise</h3>
+                        <div class="plano-preco">
+                            <span class="preco">R$299,90</span>
+                            <span class="periodo">/mês</span>
+                        </div>
+                    </div>
+                    <ul class="plano-features">
+                        <li><i class="fas fa-check"></i> Projetos ilimitados</li>
+                        <li><i class="fas fa-check"></i> Suporte 24/7</li>
+                        <li><i class="fas fa-check"></i> Armazenamento ilimitado</li>
+                        <li><i class="fas fa-check"></i> Relatórios customizados</li>
+                        <li><i class="fas fa-check"></i> API acesso total</li>
+                        <li><i class="fas fa-check"></i> White label</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary btn-block">Comprar agora</a>
+                </div>
             </div>
-            <div class="grid md:grid-cols-4 gap-6">
-                <div class="bg-gray-800 p-6 rounded-3xl">Dashboard</div>
-                <div class="bg-gray-800 p-6 rounded-3xl">Minhas Compras</div>
-                <div class="bg-gray-800 p-6 rounded-3xl">Downloads</div>
-                <div class="bg-gray-800 p-6 rounded-3xl">Tickets</div>
-            </div>
-            <p class="text-center mt-12 text-gray-400">Aqui virá React + autenticação real no próximo passo</p>
         </div>
     </section>
 
-    <!-- Modais -->
-    <!-- Login -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[100] modal">
-        <div class="bg-white rounded-3xl p-10 w-full max-w-md">
-            <h2 class="text-3xl font-bold mb-8 text-center">Bem-vindo de volta</h2>
-            <input id="login-email" type="email" placeholder="E-mail" class="w-full px-5 py-4 border rounded-2xl mb-4">
-            <input id="login-password" type="password" placeholder="Senha" class="w-full px-5 py-4 border rounded-2xl mb-6">
-            <button onclick="handleLogin()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl">Entrar</button>
-            <p class="text-center mt-6 text-sm">Não tem conta? <span onclick="switchModal('login-modal','cadastro-modal')" class="text-blue-600 cursor-pointer font-medium">Cadastre-se</span></p>
+    <!-- Avaliações -->
+    <section class="avaliacoes" id="avaliacoes">
+        <div class="container">
+            <h2 class="section-title">O que dizem nossos clientes</h2>
+            <p class="section-subtitle">Avaliações reais de quem já usa nossa plataforma</p>
+            <div class="avaliacoes-grid">
+                <div class="avaliacao-card">
+                    <div class="avaliacao-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="avaliacao-texto">"Plataforma incrível! Transformou completamente meu negócio. Suporte excepcional."</p>
+                    <div class="avaliacao-autor">
+                        <img src="https://via.placeholder.com/50/6C63FF/ffffff?text=MS" alt="Maria Silva">
+                        <div>
+                            <strong>Maria Silva</strong>
+                            <span>CEO - TechBrasil</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="avaliacao-card">
+                    <div class="avaliacao-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="avaliacao-texto">"Melhor investimento que fiz. Resultados em menos de 1 mês. Recomendo!"</p>
+                    <div class="avaliacao-autor">
+                        <img src="https://via.placeholder.com/50/FF6B6B/ffffff?text=JO" alt="João Oliveira">
+                        <div>
+                            <strong>João Oliveira</strong>
+                            <span>Diretor - InovaTech</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="avaliacao-card">
+                    <div class="avaliacao-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="avaliacao-texto">"Equipe fantástica, sempre pronta para ajudar. Plataforma robusta e confiável."</p>
+                    <div class="avaliacao-autor">
+                        <img src="https://via.placeholder.com/50/4ECDC4/ffffff?text=AC" alt="Ana Costa">
+                        <div>
+                            <strong>Ana Costa</strong>
+                            <span>Gerente - DataSol</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2 class="section-title">Perguntas Frequentes</h2>
+            <p class="section-subtitle">Tire suas dúvidas sobre nossos serviços</p>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Como funciona o período de teste?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Oferecemos 7 dias de teste grátis em todos os planos. Você pode cancelar a qualquer momento sem custos.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Quais formas de pagamento são aceitas?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Aceitamos PIX, cartão de crédito, boleto bancário e Mercado Pago.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Posso mudar de plano depois?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim! Você pode fazer upgrade ou downgrade do seu plano a qualquer momento.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Como funciona o suporte?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Suporte 24/7 via chat, WhatsApp, Telegram e email para todos os clientes.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Meus dados estão seguros?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim! Seguimos todas as normas da LGPD e utilizamos criptografia de ponta a ponta.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parceiros -->
+    <section class="parceiros" id="parceiros">
+        <div class="container">
+            <h2 class="section-title">Nossos Parceiros</h2>
+            <p class="section-subtitle">Empresas que confiam em nosso trabalho</p>
+            <div class="parceiros-grid">
+                <div class="parceiro-item">
+                    <img src="https://via.placeholder.com/150x60/333/fff?text=Parceiro+1" alt="Parceiro 1">
+                </div>
+                <div class="parceiro-item">
+                    <img src="https://via.placeholder.com/150x60/333/fff?text=Parceiro+2" alt="Parceiro 2">
+                </div>
+                <div class="parceiro-item">
+                    <img src="https://via.placeholder.com/150x60/333/fff?text=Parceiro+3" alt="Parceiro 3">
+                </div>
+                <div class="parceiro-item">
+                    <img src="https://via.placeholder.com/150x60/333/fff?text=Parceiro+4" alt="Parceiro 4">
+                </div>
+                <div class="parceiro-item">
+                    <img src="https://via.placeholder.com/150x60/333/fff?text=Parceiro+5" alt="Parceiro 5">
+                </div>
+                <div class="parceiro-item">
+                    <img src="https://via.placeholder.com/150x60/333/fff?text=Parceiro+6" alt="Parceiro 6">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="https://via.placeholder.com/150x40/6C63FF/ffffff?text=LOGO" alt="Logo" class="footer-logo">
+                    <p>Soluções digitais completas para transformar seu negócio.</p>
+                    <div class="social-links">
+                        <a href="https://wa.me/seunumero" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://t.me/seucanal" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
+                        <a href="https://instagram.com/seuperfil" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://facebook.com/seuperfil" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="#home">Início</a></li>
+                        <li><a href="#servicos">Serviços</a></li>
+                        <li><a href="#planos">Planos</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Suporte</h4>
+                    <ul>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#">Central de Ajuda</a></li>
+                        <li><a href="#">Contato</a></li>
+                        <li><a href="#">Tickets</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contato</h4>
+                    <ul class="contato-info">
+                        <li><i class="fas fa-envelope"></i> contato@seusite.com.br</li>
+                        <li><i class="fas fa-phone"></i> (11) 99999-9999</li>
+                        <li><i class="fas fa-map-marker-alt"></i> São Paulo - SP</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Sua Empresa. Todos os direitos reservados.</p>
+                <div class="footer-links">
+                    <a href="politica-privacidade.html">Política de Privacidade</a>
+                    <span>|</span>
+                    <a href="termos-uso.html">Termos de Uso</a>
+                    <span>|</span>
+                    <a href="lgpd.html">LGPD</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botões Flutuantes -->
+    <div class="floating-buttons">
+        <a href="https://wa.me/seunumero" class="float-btn whatsapp" target="_blank" title="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://t.me/seucanal" class="float-btn telegram" target="_blank" title="Telegram">
+            <i class="fab fa-telegram"></i>
+        </a>
+        <a href="#home" class="float-btn top" title="Voltar ao topo">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </div>
+
+    <!-- Cookie / LGPD -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-content">
+            <p>🍪 Utilizamos cookies para melhorar sua experiência. Ao continuar, você concorda com nossa <a href="politica-privacidade.html">Política de Privacidade</a> e <a href="lgpd.html">LGPD</a>.</p>
+            <div class="cookie-buttons">
+                <button class="btn btn-primary" onclick="aceitarCookies()">Aceitar</button>
+                <button class="btn btn-outline" onclick="recusarCookies()">Recusar</button>
+            </div>
         </div>
     </div>
 
-    <!-- Cadastro -->
-    <div id="cadastro-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[100] modal">
-        <div class="bg-white rounded-3xl p-10 w-full max-w-md max-h-[90vh] overflow-auto">
-            <h2 class="text-3xl font-bold mb-8 text-center">Criar conta</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <input id="nome" placeholder="Nome" class="px-5 py-4 border rounded-2xl">
-                <input id="sobrenome" placeholder="Sobrenome" class="px-5 py-4 border rounded-2xl">
-            </div>
-            <input id="email" type="email" placeholder="E-mail" class="w-full px-5 py-4 border rounded-2xl mt-4">
-            <input id="telefone" placeholder="Telefone" class="w-full px-5 py-4 border rounded-2xl mt-4">
-            <input id="usuario" placeholder="Usuário" class="w-full px-5 py-4 border rounded-2xl mt-4">
-            <input id="senha" type="password" placeholder="Senha" class="w-full px-5 py-4 border rounded-2xl mt-4">
-            <input id="confirm-senha" type="password" placeholder="Confirmar Senha" class="w-full px-5 py-4 border rounded-2xl mt-4">
-            
-            <label class="flex items-center gap-3 mt-6 text-sm">
-                <input type="checkbox" class="w-5 h-5"> Aceito os Termos e LGPD
-            </label>
-            
-            <button onclick="handleCadastro()" class="w-full py-4 mt-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-2xl">Cadastrar e Continuar</button>
-        </div>
-    </div>
-
-    <script>
-        function showModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function switchModal(from, to) {
-            document.getElementById(from).classList.add('hidden');
-            document.getElementById(to).classList.remove('hidden');
-        }
-        function handleLogin() {
-            alert("✅ Login realizado com sucesso! (Simulação - JWT virá no Backend)");
-            document.getElementById('login-modal').classList.add('hidden');
-        }
-        function handleCadastro() {
-            const senha = document.getElementById('senha').value;
-            const confirm = document.getElementById('confirm-senha').value;
-            if (senha !== confirm) return alert("Senhas não coincidem!");
-            alert("✅ Cadastro realizado! Código de verificação enviado por e-mail (simulado).");
-            document.getElementById('cadastro-modal').classList.add('hidden');
-        }
-        function addToCart() { alert("Produto adicionado ao carrinho!"); }
-        function navigateTo(section) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            if (section === 'home') document.getElementById('home').classList.remove('hidden');
-            else if (section === 'loja') document.getElementById('loja').classList.remove('hidden');
-        }
-        function showPanel() {
-            document.getElementById('painel-section').classList.remove('hidden');
-            window.scrollTo(0, 0);
-        }
-        function hidePanel() { document.getElementById('painel-section').classList.add('hidden'); }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

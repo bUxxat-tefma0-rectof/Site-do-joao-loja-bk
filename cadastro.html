@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Crie sua conta - Plataforma Digital">
     <title>Criar Conta - Plataforma Digital</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Estilos da página de cadastro */
         .auth-page {
             min-height: 100vh;
             display: flex;
@@ -16,23 +14,10 @@
             justify-content: center;
             background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
             padding: 100px 20px 40px;
-            position: relative;
-            overflow: hidden;
-        }
-        .auth-page::before {
-            content: '';
-            position: absolute;
-            top: -200px;
-            right: -200px;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(108,99,255,0.08) 0%, transparent 70%);
-            border-radius: 50%;
         }
         .auth-container {
             width: 100%;
             max-width: 550px;
-            z-index: 1;
         }
         .auth-card {
             background: #1a1a2e;
@@ -52,12 +37,11 @@
         .auth-header h1 {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #ffffff;
+            color: #fff;
             margin-bottom: 8px;
         }
         .auth-header p {
             color: #8e8ea0;
-            font-size: 0.95rem;
         }
         .auth-header a {
             color: #6C63FF;
@@ -89,12 +73,12 @@
         }
         .step.active .step-circle {
             background: #6C63FF;
-            color: #ffffff;
+            color: #fff;
             border-color: #6C63FF;
         }
         .step.completed .step-circle {
             background: #10B981;
-            color: #ffffff;
+            color: #fff;
             border-color: #10B981;
         }
         .step-label {
@@ -102,7 +86,7 @@
             color: #8e8ea0;
         }
         .step.active .step-label {
-            color: #ffffff;
+            color: #fff;
         }
         .step-line {
             width: 40px;
@@ -134,14 +118,12 @@
             margin-bottom: 8px;
             font-size: 0.9rem;
         }
-        .form-group label .required {
+        .required {
             color: #EF4444;
-            margin-left: 2px;
         }
-        .form-group label .optional {
+        .optional {
             color: #6c6c8a;
             font-size: 0.8rem;
-            margin-left: 4px;
         }
         .input-wrapper {
             position: relative;
@@ -159,14 +141,13 @@
             background: #0f0f1a;
             border: 1px solid #2d2d44;
             border-radius: 12px;
-            color: #ffffff;
+            color: #fff;
             font-size: 0.95rem;
             outline: none;
-            transition: all 0.3s;
+            transition: 0.3s;
         }
         .form-group input:focus {
             border-color: #6C63FF;
-            box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
         }
         .form-group input.error {
             border-color: #EF4444;
@@ -234,11 +215,11 @@
             cursor: pointer;
             border: 2px solid transparent;
             font-size: 1rem;
-            transition: all 0.3s;
+            transition: 0.3s;
         }
         .btn-primary {
             background: #6C63FF;
-            color: #ffffff;
+            color: #fff;
             border-color: #6C63FF;
         }
         .btn-primary:hover {
@@ -251,7 +232,7 @@
         }
         .btn-outline:hover {
             background: #6C63FF;
-            color: #ffffff;
+            color: #fff;
         }
         .btn-block {
             width: 100%;
@@ -272,25 +253,39 @@
             font-size: 0.9rem;
             color: #b0b0b8;
         }
-        .checkbox-group label a {
+        .checkbox-group a {
             color: #6C63FF;
             text-decoration: underline;
         }
+        .codigo-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px dashed #10B981;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .codigo-box p {
+            color: #b0b0b8;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .codigo-visivel {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10B981;
+            letter-spacing: 8px;
+            font-family: monospace;
+        }
+        .codigo-box small {
+            color: #6c6c8a;
+            font-size: 0.75rem;
+        }
         @media (max-width: 600px) {
-            .auth-card {
-                padding: 24px 20px;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .code-input {
-                width: 42px !important;
-                height: 48px;
-                font-size: 1.2rem !important;
-            }
-            .step-label {
-                display: none;
-            }
+            .auth-card { padding: 24px 20px; }
+            .form-row { grid-template-columns: 1fr; }
+            .code-input { width: 42px !important; height: 48px; font-size: 1.2rem !important; }
+            .step-label { display: none; }
         }
     </style>
 </head>
@@ -332,16 +327,16 @@
                     <div class="step-line" id="stepLine1"></div>
                     <div class="step" id="stepIndicator2">
                         <div class="step-circle">2</div>
-                        <span class="step-label">Verificação</span>
+                        <span class="step-label">Código</span>
                     </div>
                     <div class="step-line" id="stepLine2"></div>
                     <div class="step" id="stepIndicator3">
                         <div class="step-circle">3</div>
-                        <span class="step-label">Concluído</span>
+                        <span class="step-label">Pronto</span>
                     </div>
                 </div>
 
-                <form id="cadastroForm" onsubmit="return false;">
+                <form onsubmit="return false;">
                     <!-- STEP 1 -->
                     <div class="form-step active" id="step1">
                         <div class="form-row">
@@ -362,6 +357,7 @@
                                 <div class="error-message" id="sobrenomeError"></div>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label>CPF <span class="optional">(opcional)</span></label>
                             <div class="input-wrapper">
@@ -369,6 +365,7 @@
                                 <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label>Telefone <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -377,6 +374,7 @@
                             </div>
                             <div class="error-message" id="telefoneError"></div>
                         </div>
+
                         <div class="form-group">
                             <label>E-mail <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -385,6 +383,7 @@
                             </div>
                             <div class="error-message" id="emailError"></div>
                         </div>
+
                         <div class="form-group">
                             <label>Nome de usuário <span class="required">*</span></label>
                             <div class="input-wrapper">
@@ -393,6 +392,7 @@
                             </div>
                             <div class="error-message" id="usuarioError"></div>
                         </div>
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Senha <span class="required">*</span></label>
@@ -413,27 +413,41 @@
                                 <div class="error-message" id="confirmarSenhaError"></div>
                             </div>
                         </div>
+
                         <div class="checkbox-group">
                             <input type="checkbox" id="aceitarTermos">
                             <label for="aceitarTermos">Li e aceito os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a> <span class="required">*</span></label>
                         </div>
                         <div class="error-message" id="termosError"></div>
+
                         <div class="form-buttons">
-                            <button type="button" class="btn btn-primary btn-block" onclick="proximoPasso(1)">
+                            <button type="button" class="btn btn-primary btn-block" onclick="proximoPasso()">
                                 Continuar <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- STEP 2 -->
+                    <!-- STEP 2 - VERIFICAÇÃO -->
                     <div class="form-step" id="step2">
                         <div style="text-align: center; margin-bottom: 24px;">
                             <div style="font-size: 4rem; margin-bottom: 16px;">📧</div>
-                            <h3 style="color: #ffffff; margin-bottom: 8px;">Verifique seu e-mail</h3>
-                            <p style="color: #8e8ea0;">Enviamos um código para<br><strong style="color: #6C63FF;" id="emailDisplay"></strong></p>
+                            <h3 style="color: #fff; margin-bottom: 8px;">Verificação de E-mail</h3>
+                            <p style="color: #8e8ea0;">
+                                Enviamos um código para<br>
+                                <strong style="color: #6C63FF;" id="emailDisplay"></strong>
+                            </p>
                         </div>
+
+                        <!-- CÓDIGO VISÍVEL NA TELA -->
+                        <div class="codigo-box">
+                            <p>⚠️ <strong>MODO TESTE</strong> - Seu código é:</p>
+                            <span class="codigo-visivel" id="codigoVisivel">------</span>
+                            <br>
+                            <small>Em produção, este código será enviado por e-mail</small>
+                        </div>
+
                         <div class="form-group">
-                            <label style="text-align: center; display: block;">Código de 6 dígitos</label>
+                            <label style="text-align: center; display: block;">Digite o código de 6 dígitos</label>
                             <div class="code-input-group">
                                 <input type="text" class="code-input" maxlength="1" data-index="0">
                                 <input type="text" class="code-input" maxlength="1" data-index="1">
@@ -444,79 +458,87 @@
                             </div>
                             <div class="error-message" id="codigoError" style="text-align: center;"></div>
                         </div>
+
                         <div class="resend-timer">
                             Reenviar em <span id="timer">60</span>s<br>
-                            <span class="resend-btn" id="resendBtn" onclick="reenviarCodigo()">Reenviar código</span>
+                            <span class="resend-btn" id="resendBtn" onclick="gerarNovoCodigo()">Reenviar código</span>
                         </div>
+
                         <div class="form-buttons">
-                            <button type="button" class="btn btn-outline" onclick="voltarPasso(1)"><i class="fas fa-arrow-left"></i> Voltar</button>
-                            <button type="button" class="btn btn-primary" onclick="verificarCodigo()">Verificar <i class="fas fa-check"></i></button>
+                            <button type="button" class="btn btn-outline" onclick="voltarPasso()">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="verificarCodigo()">
+                                Verificar <i class="fas fa-check"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- STEP 3 -->
+                    <!-- STEP 3 - CONCLUÍDO -->
                     <div class="form-step" id="step3">
                         <div style="text-align: center; padding: 20px 0;">
                             <div style="font-size: 5rem;">🎉</div>
-                            <h3 style="color: #10B981; font-size: 1.5rem;">Conta criada!</h3>
-                            <p style="color: #8e8ea0;">Bem-vindo(a), <strong style="color: #ffffff;" id="nomeDisplay"></strong>!</p>
-                            <div class="form-buttons" style="margin-top: 24px;">
-                                <a href="painel-cliente.html" class="btn btn-primary btn-block">Acessar Painel <i class="fas fa-arrow-right"></i></a>
+                            <h3 style="color: #10B981; font-size: 1.5rem; margin-bottom: 8px;">Conta criada com sucesso!</h3>
+                            <p style="color: #8e8ea0; margin-bottom: 24px;">
+                                Bem-vindo(a), <strong style="color: #fff;" id="nomeDisplay"></strong>!
+                            </p>
+                            <div class="form-buttons">
+                                <a href="login.html" class="btn btn-outline">Ir para Login</a>
+                                <a href="index.html" class="btn btn-primary">Página Inicial</a>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
         // ============================================
-        // CONFIGURAÇÃO
+        // VARIÁVEIS GLOBAIS
         // ============================================
-        const API_URL = 'http://localhost:8000/api';
-        let passoAtual = 1;
+        let codigoGerado = '';
         let timerInterval;
         let tempoRestante = 60;
 
         // ============================================
-        // MÁSCARAS
+        // MÁSCARAS DE INPUT
         // ============================================
         document.getElementById('cpf').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            if (value.length > 9) value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
-            else if (value.length > 6) value = value.replace(/^(\d{3})(\d{3})(\d{1,3})$/, '$1.$2.$3');
-            else if (value.length > 3) value = value.replace(/^(\d{3})(\d{1,3})$/, '$1.$2');
-            e.target.value = value;
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+            else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{1,3})$/, '$1.$2.$3');
+            else if (v.length > 3) v = v.replace(/^(\d{3})(\d{1,3})$/, '$1.$2');
+            e.target.value = v;
         });
 
         document.getElementById('telefone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            if (value.length > 10) value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
-            else if (value.length > 6) value = value.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
-            else if (value.length > 2) value = value.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
-            else if (value.length > 0) value = value.replace(/^(\d{0,2})$/, '($1');
-            e.target.value = value;
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+            else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+            else if (v.length > 0) v = v.replace(/^(\d{0,2})$/, '($1');
+            e.target.value = v;
         });
 
         // ============================================
-        // CODE INPUTS
+        // NAVEGAÇÃO DOS INPUTS DE CÓDIGO
         // ============================================
         document.querySelectorAll('.code-input').forEach(input => {
-            input.addEventListener('input', function(e) {
+            input.addEventListener('input', function() {
                 if (!/^\d$/.test(this.value)) { this.value = ''; return; }
-                const index = parseInt(this.getAttribute('data-index'));
-                if (this.value && index < 5) {
-                    const next = document.querySelector(`.code-input[data-index="${index + 1}"]`);
+                const idx = parseInt(this.getAttribute('data-index'));
+                if (this.value && idx < 5) {
+                    const next = document.querySelector(`.code-input[data-index="${idx + 1}"]`);
                     if (next) next.focus();
                 }
             });
             input.addEventListener('keydown', function(e) {
-                const index = parseInt(this.getAttribute('data-index'));
-                if (e.key === 'Backspace' && !this.value && index > 0) {
-                    const prev = document.querySelector(`.code-input[data-index="${index - 1}"]`);
+                const idx = parseInt(this.getAttribute('data-index'));
+                if (e.key === 'Backspace' && !this.value && idx > 0) {
+                    const prev = document.querySelector(`.code-input[data-index="${idx - 1}"]`);
                     if (prev) { prev.focus(); prev.value = ''; }
                 }
             });
@@ -537,308 +559,256 @@
         }
 
         // ============================================
-        // VALIDAÇÃO STEP 1
+        // VALIDAÇÃO DO STEP 1
         // ============================================
         function validarStep1() {
             let valido = true;
-            const nome = document.getElementById('nome');
-            const sobrenome = document.getElementById('sobrenome');
-            const email = document.getElementById('email');
-            const telefone = document.getElementById('telefone');
-            const usuario = document.getElementById('usuario');
-            const senha = document.getElementById('senha');
-            const confirmarSenha = document.getElementById('confirmarSenha');
-            const termos = document.getElementById('aceitarTermos');
 
-            if (nome.value.trim().length < 2) {
-                document.getElementById('nomeError').textContent = 'Nome obrigatório';
-                nome.classList.add('error');
-                valido = false;
-            } else {
-                document.getElementById('nomeError').textContent = '';
-                nome.classList.remove('error');
+            function mostrarErro(id, msg) {
+                document.getElementById(id + 'Error').textContent = msg;
+                document.getElementById(id).classList.add('error');
+            }
+            function limparErro(id) {
+                document.getElementById(id + 'Error').textContent = '';
+                document.getElementById(id).classList.remove('error');
             }
 
-            if (sobrenome.value.trim().length < 2) {
-                document.getElementById('sobrenomeError').textContent = 'Sobrenome obrigatório';
-                sobrenome.classList.add('error');
+            if (document.getElementById('nome').value.trim().length < 2) {
+                mostrarErro('nome', 'Nome obrigatório (mínimo 2 caracteres)');
                 valido = false;
-            } else {
-                document.getElementById('sobrenomeError').textContent = '';
-                sobrenome.classList.remove('error');
-            }
+            } else limparErro('nome');
 
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-                document.getElementById('emailError').textContent = 'E-mail inválido';
-                email.classList.add('error');
+            if (document.getElementById('sobrenome').value.trim().length < 2) {
+                mostrarErro('sobrenome', 'Sobrenome obrigatório');
                 valido = false;
-            } else {
-                document.getElementById('emailError').textContent = '';
-                email.classList.remove('error');
-            }
+            } else limparErro('sobrenome');
 
-            if (telefone.value.replace(/\D/g, '').length < 10) {
-                document.getElementById('telefoneError').textContent = 'Telefone inválido';
-                telefone.classList.add('error');
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value)) {
+                mostrarErro('email', 'E-mail inválido');
                 valido = false;
-            } else {
-                document.getElementById('telefoneError').textContent = '';
-                telefone.classList.remove('error');
-            }
+            } else limparErro('email');
 
-            if (usuario.value.trim().length < 4) {
-                document.getElementById('usuarioError').textContent = 'Mínimo 4 caracteres';
-                usuario.classList.add('error');
+            if (document.getElementById('telefone').value.replace(/\D/g, '').length < 10) {
+                mostrarErro('telefone', 'Telefone inválido');
                 valido = false;
-            } else {
-                document.getElementById('usuarioError').textContent = '';
-                usuario.classList.remove('error');
-            }
+            } else limparErro('telefone');
 
-            if (senha.value.length < 6) {
-                document.getElementById('senhaError').textContent = 'Mínimo 6 caracteres';
-                senha.classList.add('error');
+            if (document.getElementById('usuario').value.trim().length < 4) {
+                mostrarErro('usuario', 'Mínimo 4 caracteres');
                 valido = false;
-            } else {
-                document.getElementById('senhaError').textContent = '';
-                senha.classList.remove('error');
-            }
+            } else limparErro('usuario');
 
-            if (senha.value !== confirmarSenha.value) {
-                document.getElementById('confirmarSenhaError').textContent = 'Senhas não conferem';
-                confirmarSenha.classList.add('error');
+            if (document.getElementById('senha').value.length < 6) {
+                mostrarErro('senha', 'Mínimo 6 caracteres');
                 valido = false;
-            } else {
-                document.getElementById('confirmarSenhaError').textContent = '';
-                confirmarSenha.classList.remove('error');
-            }
+            } else limparErro('senha');
 
-            if (!termos.checked) {
+            if (document.getElementById('senha').value !== document.getElementById('confirmarSenha').value) {
+                mostrarErro('confirmarSenha', 'Senhas não conferem');
+                valido = false;
+            } else limparErro('confirmarSenha');
+
+            if (!document.getElementById('aceitarTermos').checked) {
                 document.getElementById('termosError').textContent = 'Aceite os termos';
                 valido = false;
-            } else {
-                document.getElementById('termosError').textContent = '';
-            }
+            } else document.getElementById('termosError').textContent = '';
 
             return valido;
         }
 
         // ============================================
-        // API - ENVIAR CÓDIGO
+        // GERAR CÓDIGO ALEATÓRIO
         // ============================================
-        async function enviarCodigoParaBackend(dados) {
-            const response = await fetch(`${API_URL}/cadastro/enviar-codigo`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nome: dados.nome,
-                    sobrenome: dados.sobrenome,
-                    email: dados.email,
-                    telefone: dados.telefone,
-                    usuario: dados.usuario,
-                    senha: dados.senha
-                })
-            });
-            const resultado = await response.json();
-            if (!response.ok) throw new Error(resultado.detail || 'Erro ao enviar código');
-            return resultado;
-        }
-
-        // ============================================
-        // API - VERIFICAR CÓDIGO
-        // ============================================
-        async function verificarCodigoNoBackend(email, codigo) {
-            const response = await fetch(`${API_URL}/cadastro/verificar-codigo`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, codigo: codigo })
-            });
-            const resultado = await response.json();
-            if (!response.ok) throw new Error(resultado.detail || 'Código inválido');
-            return resultado;
-        }
-
-        // ============================================
-        // NAVEGAÇÃO
-        // ============================================
-        async function proximoPasso(passo) {
-            if (passo === 1) {
-                if (!validarStep1()) return;
-
-                const dados = {
-                    nome: document.getElementById('nome').value,
-                    sobrenome: document.getElementById('sobrenome').value,
-                    email: document.getElementById('email').value,
-                    telefone: document.getElementById('telefone').value,
-                    usuario: document.getElementById('usuario').value,
-                    senha: document.getElementById('senha').value
-                };
-                sessionStorage.setItem('cadastroDados', JSON.stringify(dados));
-                document.getElementById('emailDisplay').textContent = dados.email;
-
-                mostrarLoading(true);
-                try {
-                    await enviarCodigoParaBackend(dados);
-                    
-                    document.getElementById('stepIndicator1').classList.remove('active');
-                    document.getElementById('stepIndicator1').classList.add('completed');
-                    document.getElementById('stepLine1').classList.add('completed');
-                    document.getElementById('stepIndicator2').classList.add('active');
-                    
-                    iniciarTimer();
-                    document.getElementById('step1').classList.remove('active');
-                    document.getElementById('step2').classList.add('active');
-                    passoAtual = 2;
-                    
-                    setTimeout(() => {
-                        document.querySelector('.code-input[data-index="0"]').focus();
-                    }, 300);
-                    
-                    mostrarToast('📧 Código enviado! Verifique seu e-mail.', 'success');
-                } catch (error) {
-                    mostrarToast('❌ ' + error.message, 'error');
-                } finally {
-                    mostrarLoading(false);
-                }
+        function gerarCodigo() {
+            codigoGerado = '';
+            for (let i = 0; i < 6; i++) {
+                codigoGerado += Math.floor(Math.random() * 10);
             }
-        }
-
-        function voltarPasso(passo) {
-            document.getElementById(`step${passo + 1}`).classList.remove('active');
-            document.getElementById(`step${passo}`).classList.add('active');
-            passoAtual = passo;
-            if (passo === 1) {
-                document.getElementById('stepIndicator1').classList.add('active');
-                document.getElementById('stepIndicator1').classList.remove('completed');
-                document.getElementById('stepLine1').classList.remove('completed');
-                document.getElementById('stepIndicator2').classList.remove('active');
-                pararTimer();
-            }
+            document.getElementById('codigoVisivel').textContent = codigoGerado;
+            console.log('📧 Código gerado:', codigoGerado);
+            return codigoGerado;
         }
 
         // ============================================
-        // VERIFICAR CÓDIGO
-        // ============================================
-        async function verificarCodigo() {
-            const inputs = document.querySelectorAll('.code-input');
-            let codigo = '';
-            inputs.forEach(i => codigo += i.value);
-            
-            const error = document.getElementById('codigoError');
-            const dados = JSON.parse(sessionStorage.getItem('cadastroDados') || '{}');
-            
-            if (codigo.length < 6) {
-                error.textContent = '⚠️ Digite o código completo';
-                return;
-            }
-            
-            mostrarLoading(true);
-            try {
-                await verificarCodigoNoBackend(dados.email, codigo);
-                
-                document.getElementById('stepIndicator2').classList.remove('active');
-                document.getElementById('stepIndicator2').classList.add('completed');
-                document.getElementById('stepLine2').classList.add('completed');
-                document.getElementById('stepIndicator3').classList.add('active');
-                document.getElementById('nomeDisplay').textContent = dados.nome;
-                
-                setTimeout(() => {
-                    document.getElementById('step2').classList.remove('active');
-                    document.getElementById('step3').classList.add('active');
-                    passoAtual = 3;
-                    pararTimer();
-                }, 500);
-            } catch (error) {
-                error.textContent = '❌ ' + error.message;
-                inputs.forEach(i => { i.value = ''; i.style.borderColor = '#EF4444'; });
-                setTimeout(() => inputs.forEach(i => i.style.borderColor = ''), 500);
-                inputs[0].focus();
-            } finally {
-                mostrarLoading(false);
-            }
-        }
-
-        // ============================================
-        // REENVIAR CÓDIGO
-        // ============================================
-        async function reenviarCodigo() {
-            if (tempoRestante > 0) return;
-            const dados = JSON.parse(sessionStorage.getItem('cadastroDados') || '{}');
-            
-            try {
-                const response = await fetch(`${API_URL}/cadastro/reenviar-codigo`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: dados.email })
-                });
-                if (!response.ok) {
-                    const erro = await response.json();
-                    throw new Error(erro.detail || 'Erro');
-                }
-                
-                iniciarTimer();
-                document.getElementById('resendBtn').classList.remove('active');
-                document.querySelectorAll('.code-input').forEach(i => i.value = '');
-                document.querySelector('.code-input[data-index="0"]').focus();
-                document.getElementById('codigoError').textContent = '';
-                mostrarToast('✅ Código reenviado!', 'success');
-            } catch (error) {
-                mostrarToast('❌ ' + error.message, 'error');
-            }
-        }
-
-        // ============================================
-        // TIMER
+        // INICIAR TIMER
         // ============================================
         function iniciarTimer() {
             tempoRestante = 60;
             document.getElementById('timer').textContent = tempoRestante;
             document.getElementById('resendBtn').classList.remove('active');
-            pararTimer();
+            if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 tempoRestante--;
                 document.getElementById('timer').textContent = tempoRestante;
                 if (tempoRestante <= 0) {
-                    pararTimer();
+                    clearInterval(timerInterval);
                     document.getElementById('resendBtn').classList.add('active');
                 }
             }, 1000);
         }
 
-        function pararTimer() {
-            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+        // ============================================
+        // GERAR NOVO CÓDIGO (REENVIAR)
+        // ============================================
+        function gerarNovoCodigo() {
+            if (tempoRestante > 0) return;
+            gerarCodigo();
+            iniciarTimer();
+            document.querySelectorAll('.code-input').forEach(i => i.value = '');
+            document.querySelector('.code-input[data-index="0"]').focus();
+            document.getElementById('codigoError').textContent = '';
+            mostrarToast('✅ Novo código gerado!');
         }
 
         // ============================================
-        // UTILITÁRIOS
+        // AVANÇAR PARA STEP 2
         // ============================================
-        function mostrarLoading(mostrar) {
-            let loader = document.getElementById('loadingOverlay');
-            if (mostrar) {
-                if (!loader) {
-                    loader = document.createElement('div');
-                    loader.id = 'loadingOverlay';
-                    loader.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:99999;';
-                    loader.innerHTML = '<div style="text-align:center;"><div style="width:50px;height:50px;border:4px solid #6C63FF;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div><p style="color:white;">Processando...</p></div>';
-                    document.body.appendChild(loader);
-                }
+        function proximoPasso() {
+            if (!validarStep1()) return;
+
+            // Salvar dados
+            const dados = {
+                nome: document.getElementById('nome').value,
+                sobrenome: document.getElementById('sobrenome').value,
+                email: document.getElementById('email').value,
+                telefone: document.getElementById('telefone').value,
+                usuario: document.getElementById('usuario').value,
+                senha: document.getElementById('senha').value
+            };
+            sessionStorage.setItem('cadastroDados', JSON.stringify(dados));
+
+            // Atualizar email no step 2
+            document.getElementById('emailDisplay').textContent = dados.email;
+
+            // Gerar código visível
+            gerarCodigo();
+            iniciarTimer();
+
+            // Atualizar steps visuais
+            document.getElementById('stepIndicator1').classList.remove('active');
+            document.getElementById('stepIndicator1').classList.add('completed');
+            document.getElementById('stepLine1').classList.add('completed');
+            document.getElementById('stepIndicator2').classList.add('active');
+
+            // Trocar tela
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+
+            // Focar primeiro input
+            setTimeout(() => {
+                document.querySelector('.code-input[data-index="0"]').focus();
+            }, 300);
+        }
+
+        // ============================================
+        // VOLTAR PARA STEP 1
+        // ============================================
+        function voltarPasso() {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('stepIndicator1').classList.add('active');
+            document.getElementById('stepIndicator1').classList.remove('completed');
+            document.getElementById('stepLine1').classList.remove('completed');
+            document.getElementById('stepIndicator2').classList.remove('active');
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        // ============================================
+        // VERIFICAR CÓDIGO
+        // ============================================
+        function verificarCodigo() {
+            const inputs = document.querySelectorAll('.code-input');
+            let codigoDigitado = '';
+            inputs.forEach(i => codigoDigitado += i.value);
+
+            const errorEl = document.getElementById('codigoError');
+
+            if (codigoDigitado.length < 6) {
+                errorEl.textContent = '⚠️ Digite o código completo de 6 dígitos';
+                errorEl.style.color = '#F59E0B';
+                return;
+            }
+
+            if (codigoDigitado === codigoGerado) {
+                // CÓDIGO CORRETO!
+                errorEl.textContent = '✅ Código verificado!';
+                errorEl.style.color = '#10B981';
+
+                // Pegar dados salvos
+                const dados = JSON.parse(sessionStorage.getItem('cadastroDados') || '{}');
+
+                // Salvar no localStorage (simula banco de dados)
+                const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+                const novoUsuario = {
+                    id: Date.now(),
+                    nome: dados.nome,
+                    sobrenome: dados.sobrenome,
+                    email: dados.email,
+                    telefone: dados.telefone,
+                    usuario: dados.usuario,
+                    senha: dados.senha,
+                    dataCadastro: new Date().toISOString()
+                };
+                usuarios.push(novoUsuario);
+                localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+                console.log('✅ Usuário cadastrado:', novoUsuario);
+
+                // Atualizar nome no step 3
+                document.getElementById('nomeDisplay').textContent = dados.nome;
+
+                // Atualizar steps visuais
+                document.getElementById('stepIndicator2').classList.remove('active');
+                document.getElementById('stepIndicator2').classList.add('completed');
+                document.getElementById('stepLine2').classList.add('completed');
+                document.getElementById('stepIndicator3').classList.add('active');
+
+                // Pequeno delay e trocar tela
+                setTimeout(() => {
+                    document.getElementById('step2').classList.remove('active');
+                    document.getElementById('step3').classList.add('active');
+                    if (timerInterval) clearInterval(timerInterval);
+                }, 800);
+
             } else {
-                if (loader) loader.remove();
+                // CÓDIGO ERRADO
+                errorEl.textContent = '❌ Código inválido! Tente novamente.';
+                errorEl.style.color = '#EF4444';
+                inputs.forEach(i => {
+                    i.value = '';
+                    i.style.borderColor = '#EF4444';
+                    setTimeout(() => i.style.borderColor = '', 500);
+                });
+                inputs[0].focus();
             }
         }
 
-        function mostrarToast(msg, tipo) {
+        // ============================================
+        // TOAST DE NOTIFICAÇÃO
+        // ============================================
+        function mostrarToast(msg) {
             const toast = document.createElement('div');
-            toast.style.cssText = `position:fixed;top:20px;right:20px;background:${tipo==='success'?'#10B981':'#EF4444'};color:white;padding:16px 24px;border-radius:12px;z-index:99999;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,0.3);`;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10B981;
+                color: white;
+                padding: 16px 24px;
+                border-radius: 12px;
+                z-index: 99999;
+                font-weight: 500;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                animation: slideIn 0.3s ease;
+            `;
             toast.textContent = msg;
             document.body.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 4000);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
-
-        // Animação do loading
-        const styleEl = document.createElement('style');
-        styleEl.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
-        document.head.appendChild(styleEl);
     </script>
 </body>
 </html>

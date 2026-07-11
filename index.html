@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LojaPro - Plataforma Completa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .hero-bg { background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.5)), url('https://picsum.photos/id/1015/1920/1080'); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl">LP</div>
+                <span class="text-3xl font-bold tracking-tight">LojaPro</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="#" class="hover:text-blue-600 transition-colors">Início</a>
+                <a href="#loja" class="hover:text-blue-600 transition-colors">Loja</a>
+                <a href="#planos" class="hover:text-blue-600 transition-colors">Planos</a>
+                <a href="#" class="hover:text-blue-600 transition-colors">Blog</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="showModal('login-modal')" class="px-6 py-2.5 text-sm font-semibold hover:bg-gray-100 rounded-2xl transition">Entrar</button>
+                <button onclick="showModal('cadastro-modal')" class="px-7 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl transition">Cadastrar</button>
+                <a href="https://wa.me/5511999999999" target="_blank" class="text-3xl text-green-500 hover:scale-110 transition"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero / Banner -->
+    <header class="hero-bg h-screen bg-cover bg-center flex items-center text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-2xl">
+                <h1 class="text-6xl md:text-7xl font-bold leading-tight mb-6">
+                    Sua loja digital<br>completa com <span class="text-blue-400">IA</span>
+                </h1>
+                <p class="text-xl text-blue-100 mb-10">Produtos digitais, assinaturas, painel do cliente, admin completo e pagamentos via Mercado Pago.</p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <button onclick="document.getElementById('planos').scrollIntoView({ behavior: 'smooth' })" 
+                            class="px-10 py-4 bg-white text-blue-900 font-semibold rounded-3xl hover:scale-105 transition flex items-center gap-3 text-lg">
+                        Ver Planos <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button onclick="showModal('contato-modal')" 
+                            class="px-10 py-4 border-2 border-white font-semibold rounded-3xl hover:bg-white/10 transition text-lg">
+                        Fale Conosco
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Serviços em Destaque -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">RECURSOS</span>
+                <h2 class="text-5xl font-bold mt-4">Tudo que você precisa</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="p-8 border border-gray-100 rounded-3xl hover:shadow-xl transition">
+                    <div class="text-5xl mb-6">🛍️</div>
+                    <h3 class="text-2xl font-semibold mb-3">Loja Completa</h3>
+                    <p class="text-gray-600">Carrinho, checkout, filtros, promoções e integração Mercado Pago.</p>
+                </div>
+                <div class="p-8 border border-gray-100 rounded-3xl hover:shadow-xl transition">
+                    <div class="text-5xl mb-6">👑</div>
+                    <h3 class="text-2xl font-semibold mb-3">Painel Admin</h3>
+                    <p class="text-gray-600">Gerencie tudo pelo navegador: produtos, clientes, pedidos, marketing.</p>
+                </div>
+                <div class="p-8 border border-gray-100 rounded-3xl hover:shadow-xl transition">
+                    <div class="text-5xl mb-6">🤖</div>
+                    <h3 class="text-2xl font-semibold mb-3">Inteligência Artificial</h3>
+                    <p class="text-gray-600">Chat ao vivo + IA para responder dúvidas automaticamente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Planos -->
+    <section id="planos" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-5xl font-bold mb-4">Planos e Preços</h2>
+            <p class="text-xl text-gray-600 mb-16">Escolha o plano ideal para o seu negócio</p>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Plano 1 -->
+                <div class="bg-white p-10 rounded-3xl border">
+                    <h3 class="font-bold text-2xl mb-2">Básico</h3>
+                    <div class="text-6xl font-bold mb-8">R$ 29<span class="text-base font-normal text-gray-500">/mês</span></div>
+                    <ul class="space-y-4 text-left mb-12">
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> 10 produtos</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Suporte básico</li>
+                    </ul>
+                    <button class="w-full py-4 rounded-2xl border-2 font-semibold">Assinar</button>
+                </div>
+
+                <!-- Plano Premium (Destaque) -->
+                <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-10 rounded-3xl relative -mt-4 shadow-2xl scale-105">
+                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-yellow-400 text-black font-bold px-8 py-1 rounded-full text-sm">MAIS VENDIDO</div>
+                    <h3 class="font-bold text-3xl mb-2">Premium</h3>
+                    <div class="text-6xl font-bold mb-8">R$ 79<span class="text-base font-normal opacity-75">/mês</span></div>
+                    <ul class="space-y-4 text-left mb-12">
+                        <li class="flex items-center gap-3"><i class="fas fa-check"></i> Produtos ilimitados</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check"></i> IA + Chat ao vivo</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check"></i> Relatórios avançados</li>
+                    </ul>
+                    <button onclick="alert('Indo para checkout com Mercado Pago... (demo)')" 
+                            class="w-full py-4 bg-white text-blue-700 font-bold rounded-2xl hover:bg-blue-50">Assinar Premium</button>
+                </div>
+
+                <!-- Plano Enterprise -->
+                <div class="bg-white p-10 rounded-3xl border">
+                    <h3 class="font-bold text-2xl mb-2">Enterprise</h3>
+                    <div class="text-6xl font-bold mb-8">R$ 199<span class="text-base font-normal text-gray-500">/mês</span></div>
+                    <ul class="space-y-4 text-left mb-12">
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Tudo ilimitado</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Suporte dedicado</li>
+                    </ul>
+                    <button class="w-full py-4 rounded-2xl border-2 font-semibold">Falar com Vendas</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="bg-gray-950 text-gray-300 py-20">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl">LP</div>
+                    <span class="text-2xl font-bold text-white">LojaPro</span>
+                </div>
+                <p class="text-sm">Plataforma completa de e-commerce com IA.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-6">Empresa</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="#" class="hover:text-white">Sobre</a></li>
+                    <li><a href="#" class="hover:text-white">Contato</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-6">Legal</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="#" class="hover:text-white">Política de Privacidade</a></li>
+                    <li><a href="#" class="hover:text-white">Termos de Uso</a></li>
+                    <li><a href="#" class="hover:text-white">LGPD</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-6">Contato</h4>
+                <p class="flex items-center gap-2 mb-2"><i class="fas fa-phone"></i> (11) 99999-9999</p>
+                <p class="flex items-center gap-2"><i class="fas fa-envelope"></i> contato@lojapro.com</p>
+                <div class="flex gap-6 mt-8 text-3xl">
+                    <a href="#" class="hover:text-white"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="hover:text-white"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modais Simples -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+        <div class="bg-white rounded-3xl p-10 w-full max-w-md mx-4">
+            <h2 class="text-3xl font-bold mb-8 text-center">Entrar na conta</h2>
+            <input type="text" placeholder="E-mail ou Usuário" class="w-full p-4 border rounded-2xl mb-4 focus:outline-none focus:border-blue-500">
+            <input type="password" placeholder="Senha" class="w-full p-4 border rounded-2xl mb-6 focus:outline-none focus:border-blue-500">
+            <button onclick="fakeLogin()" class="w-full py-4 bg-blue-600 text-white font-semibold rounded-2xl">Entrar</button>
+            <p class="text-center text-sm mt-6 text-gray-500">Esqueceu a senha? <span class="text-blue-600 cursor-pointer">Recuperar</span></p>
+        </div>
+    </div>
+
+    <script>
+        function showModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function fakeLogin() {
+            alert("✅ Login simulado com sucesso! (Próximo passo: integração real com FastAPI + JWT)");
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+        // Fecha modal clicando fora
+        document.querySelectorAll('.fixed').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

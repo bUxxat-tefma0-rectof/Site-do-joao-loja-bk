@@ -1,268 +1,844 @@
-// ============================================
-// CONFIGURAÇÃO DA API
-// ============================================
-const API_URL = 'http://localhost:8000/api';
-
-// ============================================
-// ENVIAR CÓDIGO PARA O BACKEND
-// ============================================
-async function enviarCodigoParaBackend(dados) {
-    try {
-        const response = await fetch(`${API_URL}/cadastro/enviar-codigo`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                nome: dados.nome,
-                sobrenome: dados.sobrenome,
-                email: dados.email,
-                telefone: dados.telefone,
-                usuario: dados.usuario,
-                senha: dados.senha
-            })
-        });
-        
-        const resultado = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(resultado.detail || 'Erro ao enviar código');
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Crie sua conta - Plataforma Digital">
+    <title>Criar Conta - Plataforma Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos da página de cadastro */
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+            padding: 100px 20px 40px;
+            position: relative;
+            overflow: hidden;
         }
-        
-        console.log('✅ Código enviado:', resultado);
-        return resultado;
-        
-    } catch (error) {
-        console.error('❌ Erro:', error);
-        throw error;
-    }
-}
-
-// ============================================
-// VERIFICAR CÓDIGO NO BACKEND
-// ============================================
-async function verificarCodigoNoBackend(email, codigo) {
-    try {
-        const response = await fetch(`${API_URL}/cadastro/verificar-codigo`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email,
-                codigo: codigo
-            })
-        });
-        
-        const resultado = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(resultado.detail || 'Código inválido');
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(108,99,255,0.08) 0%, transparent 70%);
+            border-radius: 50%;
         }
-        
-        console.log('✅ Código verificado:', resultado);
-        return resultado;
-        
-    } catch (error) {
-        console.error('❌ Erro:', error);
-        throw error;
-    }
-}
-
-// ============================================
-// ATUALIZAR FUNÇÃO proximoPasso
-// ============================================
-async function proximoPasso(passo) {
-    if (passo === 1) {
-        if (!validarStep1()) return;
-        
-        // Salvar dados
-        const dados = {
-            nome: document.getElementById('nome').value,
-            sobrenome: document.getElementById('sobrenome').value,
-            email: document.getElementById('email').value,
-            telefone: document.getElementById('telefone').value,
-            usuario: document.getElementById('usuario').value,
-            senha: document.getElementById('senha').value
-        };
-        sessionStorage.setItem('cadastroDados', JSON.stringify(dados));
-        
-        // Atualizar display do email
-        document.getElementById('emailDisplay').textContent = dados.email;
-        
-        // Mostrar loading
-        mostrarLoading(true);
-        
-        try {
-            // ENVIAR CÓDIGO PARA O BACKEND
-            await enviarCodigoParaBackend(dados);
-            
-            // Atualizar steps
-            document.getElementById('stepIndicator1').classList.remove('active');
-            document.getElementById('stepIndicator1').classList.add('completed');
-            document.getElementById('stepLine1').classList.add('completed');
-            document.getElementById('stepIndicator2').classList.add('active');
-            
-            // Iniciar timer
-            iniciarTimer();
-            
-            // Mudar step visível
-            document.getElementById(`step${passo}`).classList.remove('active');
-            document.getElementById(`step${passo + 1}`).classList.add('active');
-            passoAtual = passo + 1;
-            
-            // Focar primeiro input do código
-            setTimeout(() => {
-                document.querySelector('.code-input[data-index="0"]').focus();
-            }, 300);
-            
-            mostrarToast('📧 Código enviado! Verifique seu e-mail.', 'success');
-            
-        } catch (error) {
-            mostrarToast('❌ Erro ao enviar código: ' + error.message, 'error');
-        } finally {
-            mostrarLoading(false);
+        .auth-container {
+            width: 100%;
+            max-width: 550px;
+            z-index: 1;
         }
-        
-        document.querySelector('.auth-card').scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-// ============================================
-// ATUALIZAR FUNÇÃO verificarCodigo
-// ============================================
-async function verificarCodigo() {
-    const inputs = document.querySelectorAll('.code-input');
-    let codigoDigitado = '';
-    
-    inputs.forEach(input => {
-        codigoDigitado += input.value;
-    });
-    
-    const error = document.getElementById('codigoError');
-    const dados = JSON.parse(sessionStorage.getItem('cadastroDados') || '{}');
-    
-    if (codigoDigitado.length < 6) {
-        error.textContent = '⚠️ Digite o código completo de 6 dígitos';
-        error.style.color = '#F59E0B';
-        return;
-    }
-    
-    // Mostrar loading
-    mostrarLoading(true);
-    
-    try {
-        // VERIFICAR CÓDIGO NO BACKEND
-        const resultado = await verificarCodigoNoBackend(dados.email, codigoDigitado);
-        
-        error.textContent = '✅ Código verificado com sucesso!';
-        error.style.color = '#10B981';
-        
-        // Atualizar steps
-        document.getElementById('stepIndicator2').classList.remove('active');
-        document.getElementById('stepIndicator2').classList.add('completed');
-        document.getElementById('stepLine2').classList.add('completed');
-        document.getElementById('stepIndicator3').classList.add('active');
-        
-        // Atualizar nome
-        document.getElementById('nomeDisplay').textContent = dados.nome || 'Usuário';
-        
-        setTimeout(() => {
-            document.getElementById('step2').classList.remove('active');
-            document.getElementById('step3').classList.add('active');
-            passoAtual = 3;
-            pararTimer();
-            document.querySelector('.auth-card').scrollIntoView({ behavior: 'smooth' });
-        }, 800);
-        
-    } catch (error) {
-        error.textContent = '❌ ' + error.message;
-        error.style.color = '#EF4444';
-        
-        inputs.forEach(input => {
-            input.style.borderColor = '#EF4444';
-            setTimeout(() => { input.style.borderColor = ''; }, 500);
-        });
-        
-        inputs.forEach(input => input.value = '');
-        inputs[0].focus();
-    } finally {
-        mostrarLoading(false);
-    }
-}
-
-// ============================================
-// REENVIAR CÓDIGO
-// ============================================
-async function reenviarCodigo() {
-    if (tempoRestante > 0) return;
-    
-    const dados = JSON.parse(sessionStorage.getItem('cadastroDados') || '{}');
-    
-    try {
-        const response = await fetch(`${API_URL}/cadastro/reenviar-codigo`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: dados.email })
-        });
-        
-        if (!response.ok) {
-            const erro = await response.json();
-            throw new Error(erro.detail || 'Erro ao reenviar');
+        .auth-card {
+            background: #1a1a2e;
+            border: 1px solid #2d2d44;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
-        
-        // Resetar timer
-        iniciarTimer();
-        document.getElementById('resendBtn').classList.remove('active');
-        
-        // Limpar inputs
-        document.querySelectorAll('.code-input').forEach(input => input.value = '');
-        document.querySelector('.code-input[data-index="0"]').focus();
-        document.getElementById('codigoError').textContent = '';
-        
-        mostrarToast('✅ Código reenviado! Verifique seu e-mail.', 'success');
-        
-    } catch (error) {
-        mostrarToast('❌ ' + error.message, 'error');
-    }
-}
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .auth-logo {
+            height: 45px;
+            margin-bottom: 20px;
+        }
+        .auth-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .auth-header p {
+            color: #8e8ea0;
+            font-size: 0.95rem;
+        }
+        .auth-header a {
+            color: #6C63FF;
+            font-weight: 600;
+        }
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2d2d44;
+            color: #8e8ea0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 2px solid #4a4a6a;
+        }
+        .step.active .step-circle {
+            background: #6C63FF;
+            color: #ffffff;
+            border-color: #6C63FF;
+        }
+        .step.completed .step-circle {
+            background: #10B981;
+            color: #ffffff;
+            border-color: #10B981;
+        }
+        .step-label {
+            font-size: 0.85rem;
+            color: #8e8ea0;
+        }
+        .step.active .step-label {
+            color: #ffffff;
+        }
+        .step-line {
+            width: 40px;
+            height: 2px;
+            background: #4a4a6a;
+            margin: 0 8px;
+        }
+        .step-line.completed {
+            background: #10B981;
+        }
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #b0b0b8;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        .form-group label .required {
+            color: #EF4444;
+            margin-left: 2px;
+        }
+        .form-group label .optional {
+            color: #6c6c8a;
+            font-size: 0.8rem;
+            margin-left: 4px;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c6c8a;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            background: #0f0f1a;
+            border: 1px solid #2d2d44;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #6C63FF;
+            box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+        }
+        .form-group input.error {
+            border-color: #EF4444;
+        }
+        .error-message {
+            color: #EF4444;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            min-height: 20px;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c6c8a;
+            cursor: pointer;
+        }
+        .code-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .code-input {
+            width: 50px !important;
+            height: 55px;
+            text-align: center;
+            font-size: 1.5rem !important;
+            font-weight: 700;
+            padding: 0 !important;
+        }
+        .resend-timer {
+            text-align: center;
+            margin-top: 16px;
+            color: #8e8ea0;
+            font-size: 0.9rem;
+        }
+        .resend-btn {
+            color: #6C63FF;
+            cursor: pointer;
+            font-weight: 600;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .resend-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .form-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .form-buttons .btn {
+            flex: 1;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #6C63FF;
+            color: #ffffff;
+            border-color: #6C63FF;
+        }
+        .btn-primary:hover {
+            background: #5A52D5;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #6C63FF;
+            border-color: #6C63FF;
+        }
+        .btn-outline:hover {
+            background: #6C63FF;
+            color: #ffffff;
+        }
+        .btn-block {
+            width: 100%;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: #6C63FF;
+        }
+        .checkbox-group label {
+            font-size: 0.9rem;
+            color: #b0b0b8;
+        }
+        .checkbox-group label a {
+            color: #6C63FF;
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .auth-card {
+                padding: 24px 20px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .code-input {
+                width: 42px !important;
+                height: 48px;
+                font-size: 1.2rem !important;
+            }
+            .step-label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="https://via.placeholder.com/180x50/6C63FF/ffffff?text=MINHA+MARCA" alt="Logo" class="logo-img">
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#planos">Planos</a></li>
+                </ul>
+            </nav>
+            <div class="header-buttons">
+                <a href="login.html" class="btn btn-outline">Entrar</a>
+            </div>
+        </div>
+    </header>
 
-// ============================================
-// LOADING
-// ============================================
-function mostrarLoading(mostrar) {
-    let loader = document.getElementById('loadingOverlay');
-    
-    if (mostrar) {
-        if (!loader) {
-            loader = document.createElement('div');
-            loader.id = 'loadingOverlay';
-            loader.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.7);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 99999;
-            `;
-            loader.innerHTML = `
-                <div style="text-align: center;">
-                    <div style="width: 50px; height: 50px; border: 4px solid #6C63FF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
-                    <p style="color: white; font-weight: 500;">Enviando código...</p>
+    <main class="auth-page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <img src="https://via.placeholder.com/180x50/6C63FF/ffffff?text=LOGO" alt="Logo" class="auth-logo">
+                    <h1>Criar sua conta</h1>
+                    <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
                 </div>
-            `;
-            document.body.appendChild(loader);
-            
-            // Adicionar animação
-            const style = document.createElement('style');
-            style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
-            document.head.appendChild(style);
+
+                <div class="progress-steps">
+                    <div class="step active" id="stepIndicator1">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">Dados</span>
+                    </div>
+                    <div class="step-line" id="stepLine1"></div>
+                    <div class="step" id="stepIndicator2">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">Verificação</span>
+                    </div>
+                    <div class="step-line" id="stepLine2"></div>
+                    <div class="step" id="stepIndicator3">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">Concluído</span>
+                    </div>
+                </div>
+
+                <form id="cadastroForm" onsubmit="return false;">
+                    <!-- STEP 1 -->
+                    <div class="form-step active" id="step1">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nome <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="nome" placeholder="Seu nome" required>
+                                </div>
+                                <div class="error-message" id="nomeError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Sobrenome <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="sobrenome" placeholder="Seu sobrenome" required>
+                                </div>
+                                <div class="error-message" id="sobrenomeError"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>CPF <span class="optional">(opcional)</span></label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-id-card input-icon"></i>
+                                <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-phone input-icon"></i>
+                                <input type="tel" id="telefone" placeholder="(11) 99999-9999" required maxlength="15">
+                            </div>
+                            <div class="error-message" id="telefoneError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input type="email" id="email" placeholder="seu@email.com" required>
+                            </div>
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome de usuário <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-at input-icon"></i>
+                                <input type="text" id="usuario" placeholder="seu_usuario" required>
+                            </div>
+                            <div class="error-message" id="usuarioError"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Senha <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <input type="password" id="senha" placeholder="Mínimo 6 caracteres" required>
+                                    <i class="fas fa-eye password-toggle" onclick="toggleSenha('senha', this)"></i>
+                                </div>
+                                <div class="error-message" id="senhaError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmar senha <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <input type="password" id="confirmarSenha" placeholder="Repita a senha" required>
+                                    <i class="fas fa-eye password-toggle" onclick="toggleSenha('confirmarSenha', this)"></i>
+                                </div>
+                                <div class="error-message" id="confirmarSenhaError"></div>
+                            </div>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="aceitarTermos">
+                            <label for="aceitarTermos">Li e aceito os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a> <span class="required">*</span></label>
+                        </div>
+                        <div class="error-message" id="termosError"></div>
+                        <div class="form-buttons">
+                            <button type="button" class="btn btn-primary btn-block" onclick="proximoPasso(1)">
+                                Continuar <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 -->
+                    <div class="form-step" id="step2">
+                        <div style="text-align: center; margin-bottom: 24px;">
+                            <div style="font-size: 4rem; margin-bottom: 16px;">📧</div>
+                            <h3 style="color: #ffffff; margin-bottom: 8px;">Verifique seu e-mail</h3>
+                            <p style="color: #8e8ea0;">Enviamos um código para<br><strong style="color: #6C63FF;" id="emailDisplay"></strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label style="text-align: center; display: block;">Código de 6 dígitos</label>
+                            <div class="code-input-group">
+                                <input type="text" class="code-input" maxlength="1" data-index="0">
+                                <input type="text" class="code-input" maxlength="1" data-index="1">
+                                <input type="text" class="code-input" maxlength="1" data-index="2">
+                                <input type="text" class="code-input" maxlength="1" data-index="3">
+                                <input type="text" class="code-input" maxlength="1" data-index="4">
+                                <input type="text" class="code-input" maxlength="1" data-index="5">
+                            </div>
+                            <div class="error-message" id="codigoError" style="text-align: center;"></div>
+                        </div>
+                        <div class="resend-timer">
+                            Reenviar em <span id="timer">60</span>s<br>
+                            <span class="resend-btn" id="resendBtn" onclick="reenviarCodigo()">Reenviar código</span>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="button" class="btn btn-outline" onclick="voltarPasso(1)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                            <button type="button" class="btn btn-primary" onclick="verificarCodigo()">Verificar <i class="fas fa-check"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3 -->
+                    <div class="form-step" id="step3">
+                        <div style="text-align: center; padding: 20px 0;">
+                            <div style="font-size: 5rem;">🎉</div>
+                            <h3 style="color: #10B981; font-size: 1.5rem;">Conta criada!</h3>
+                            <p style="color: #8e8ea0;">Bem-vindo(a), <strong style="color: #ffffff;" id="nomeDisplay"></strong>!</p>
+                            <div class="form-buttons" style="margin-top: 24px;">
+                                <a href="painel-cliente.html" class="btn btn-primary btn-block">Acessar Painel <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO
+        // ============================================
+        const API_URL = 'http://localhost:8000/api';
+        let passoAtual = 1;
+        let timerInterval;
+        let tempoRestante = 60;
+
+        // ============================================
+        // MÁSCARAS
+        // ============================================
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            if (value.length > 9) value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+            else if (value.length > 6) value = value.replace(/^(\d{3})(\d{3})(\d{1,3})$/, '$1.$2.$3');
+            else if (value.length > 3) value = value.replace(/^(\d{3})(\d{1,3})$/, '$1.$2');
+            e.target.value = value;
+        });
+
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            if (value.length > 10) value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+            else if (value.length > 6) value = value.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+            else if (value.length > 2) value = value.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+            else if (value.length > 0) value = value.replace(/^(\d{0,2})$/, '($1');
+            e.target.value = value;
+        });
+
+        // ============================================
+        // CODE INPUTS
+        // ============================================
+        document.querySelectorAll('.code-input').forEach(input => {
+            input.addEventListener('input', function(e) {
+                if (!/^\d$/.test(this.value)) { this.value = ''; return; }
+                const index = parseInt(this.getAttribute('data-index'));
+                if (this.value && index < 5) {
+                    const next = document.querySelector(`.code-input[data-index="${index + 1}"]`);
+                    if (next) next.focus();
+                }
+            });
+            input.addEventListener('keydown', function(e) {
+                const index = parseInt(this.getAttribute('data-index'));
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    const prev = document.querySelector(`.code-input[data-index="${index - 1}"]`);
+                    if (prev) { prev.focus(); prev.value = ''; }
+                }
+            });
+        });
+
+        // ============================================
+        // TOGGLE SENHA
+        // ============================================
+        function toggleSenha(id, icon) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
         }
-    } else {
-        if (loader) loader.remove();
-    }
-}
+
+        // ============================================
+        // VALIDAÇÃO STEP 1
+        // ============================================
+        function validarStep1() {
+            let valido = true;
+            const nome = document.getElementById('nome');
+            const sobrenome = document.getElementById('sobrenome');
+            const email = document.getElementById('email');
+            const telefone = document.getElementById('telefone');
+            const usuario = document.getElementById('usuario');
+            const senha = document.getElementById('senha');
+            const confirmarSenha = document.getElementById('confirmarSenha');
+            const termos = document.getElementById('aceitarTermos');
+
+            if (nome.value.trim().length < 2) {
+                document.getElementById('nomeError').textContent = 'Nome obrigatório';
+                nome.classList.add('error');
+                valido = false;
+            } else {
+                document.getElementById('nomeError').textContent = '';
+                nome.classList.remove('error');
+            }
+
+            if (sobrenome.value.trim().length < 2) {
+                document.getElementById('sobrenomeError').textContent = 'Sobrenome obrigatório';
+                sobrenome.classList.add('error');
+                valido = false;
+            } else {
+                document.getElementById('sobrenomeError').textContent = '';
+                sobrenome.classList.remove('error');
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+                document.getElementById('emailError').textContent = 'E-mail inválido';
+                email.classList.add('error');
+                valido = false;
+            } else {
+                document.getElementById('emailError').textContent = '';
+                email.classList.remove('error');
+            }
+
+            if (telefone.value.replace(/\D/g, '').length < 10) {
+                document.getElementById('telefoneError').textContent = 'Telefone inválido';
+                telefone.classList.add('error');
+                valido = false;
+            } else {
+                document.getElementById('telefoneError').textContent = '';
+                telefone.classList.remove('error');
+            }
+
+            if (usuario.value.trim().length < 4) {
+                document.getElementById('usuarioError').textContent = 'Mínimo 4 caracteres';
+                usuario.classList.add('error');
+                valido = false;
+            } else {
+                document.getElementById('usuarioError').textContent = '';
+                usuario.classList.remove('error');
+            }
+
+            if (senha.value.length < 6) {
+                document.getElementById('senhaError').textContent = 'Mínimo 6 caracteres';
+                senha.classList.add('error');
+                valido = false;
+            } else {
+                document.getElementById('senhaError').textContent = '';
+                senha.classList.remove('error');
+            }
+
+            if (senha.value !== confirmarSenha.value) {
+                document.getElementById('confirmarSenhaError').textContent = 'Senhas não conferem';
+                confirmarSenha.classList.add('error');
+                valido = false;
+            } else {
+                document.getElementById('confirmarSenhaError').textContent = '';
+                confirmarSenha.classList.remove('error');
+            }
+
+            if (!termos.checked) {
+                document.getElementById('termosError').textContent = 'Aceite os termos';
+                valido = false;
+            } else {
+                document.getElementById('termosError').textContent = '';
+            }
+
+            return valido;
+        }
+
+        // ============================================
+        // API - ENVIAR CÓDIGO
+        // ============================================
+        async function enviarCodigoParaBackend(dados) {
+            const response = await fetch(`${API_URL}/cadastro/enviar-codigo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nome: dados.nome,
+                    sobrenome: dados.sobrenome,
+                    email: dados.email,
+                    telefone: dados.telefone,
+                    usuario: dados.usuario,
+                    senha: dados.senha
+                })
+            });
+            const resultado = await response.json();
+            if (!response.ok) throw new Error(resultado.detail || 'Erro ao enviar código');
+            return resultado;
+        }
+
+        // ============================================
+        // API - VERIFICAR CÓDIGO
+        // ============================================
+        async function verificarCodigoNoBackend(email, codigo) {
+            const response = await fetch(`${API_URL}/cadastro/verificar-codigo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, codigo: codigo })
+            });
+            const resultado = await response.json();
+            if (!response.ok) throw new Error(resultado.detail || 'Código inválido');
+            return resultado;
+        }
+
+        // ============================================
+        // NAVEGAÇÃO
+        // ============================================
+        async function proximoPasso(passo) {
+            if (passo === 1) {
+                if (!validarStep1()) return;
+
+                const dados = {
+                    nome: document.getElementById('nome').value,
+                    sobrenome: document.getElementById('sobrenome').value,
+                    email: document.getElementById('email').value,
+                    telefone: document.getElementById('telefone').value,
+                    usuario: document.getElementById('usuario').value,
+                    senha: document.getElementById('senha').value
+                };
+                sessionStorage.setItem('cadastroDados', JSON.stringify(dados));
+                document.getElementById('emailDisplay').textContent = dados.email;
+
+                mostrarLoading(true);
+                try {
+                    await enviarCodigoParaBackend(dados);
+                    
+                    document.getElementById('stepIndicator1').classList.remove('active');
+                    document.getElementById('stepIndicator1').classList.add('completed');
+                    document.getElementById('stepLine1').classList.add('completed');
+                    document.getElementById('stepIndicator2').classList.add('active');
+                    
+                    iniciarTimer();
+                    document.getElementById('step1').classList.remove('active');
+                    document.getElementById('step2').classList.add('active');
+                    passoAtual = 2;
+                    
+                    setTimeout(() => {
+                        document.querySelector('.code-input[data-index="0"]').focus();
+                    }, 300);
+                    
+                    mostrarToast('📧 Código enviado! Verifique seu e-mail.', 'success');
+                } catch (error) {
+                    mostrarToast('❌ ' + error.message, 'error');
+                } finally {
+                    mostrarLoading(false);
+                }
+            }
+        }
+
+        function voltarPasso(passo) {
+            document.getElementById(`step${passo + 1}`).classList.remove('active');
+            document.getElementById(`step${passo}`).classList.add('active');
+            passoAtual = passo;
+            if (passo === 1) {
+                document.getElementById('stepIndicator1').classList.add('active');
+                document.getElementById('stepIndicator1').classList.remove('completed');
+                document.getElementById('stepLine1').classList.remove('completed');
+                document.getElementById('stepIndicator2').classList.remove('active');
+                pararTimer();
+            }
+        }
+
+        // ============================================
+        // VERIFICAR CÓDIGO
+        // ============================================
+        async function verificarCodigo() {
+            const inputs = document.querySelectorAll('.code-input');
+            let codigo = '';
+            inputs.forEach(i => codigo += i.value);
+            
+            const error = document.getElementById('codigoError');
+            const dados = JSON.parse(sessionStorage.getItem('cadastroDados') || '{}');
+            
+            if (codigo.length < 6) {
+                error.textContent = '⚠️ Digite o código completo';
+                return;
+            }
+            
+            mostrarLoading(true);
+            try {
+                await verificarCodigoNoBackend(dados.email, codigo);
+                
+                document.getElementById('stepIndicator2').classList.remove('active');
+                document.getElementById('stepIndicator2').classList.add('completed');
+                document.getElementById('stepLine2').classList.add('completed');
+                document.getElementById('stepIndicator3').classList.add('active');
+                document.getElementById('nomeDisplay').textContent = dados.nome;
+                
+                setTimeout(() => {
+                    document.getElementById('step2').classList.remove('active');
+                    document.getElementById('step3').classList.add('active');
+                    passoAtual = 3;
+                    pararTimer();
+                }, 500);
+            } catch (error) {
+                error.textContent = '❌ ' + error.message;
+                inputs.forEach(i => { i.value = ''; i.style.borderColor = '#EF4444'; });
+                setTimeout(() => inputs.forEach(i => i.style.borderColor = ''), 500);
+                inputs[0].focus();
+            } finally {
+                mostrarLoading(false);
+            }
+        }
+
+        // ============================================
+        // REENVIAR CÓDIGO
+        // ============================================
+        async function reenviarCodigo() {
+            if (tempoRestante > 0) return;
+            const dados = JSON.parse(sessionStorage.getItem('cadastroDados') || '{}');
+            
+            try {
+                const response = await fetch(`${API_URL}/cadastro/reenviar-codigo`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: dados.email })
+                });
+                if (!response.ok) {
+                    const erro = await response.json();
+                    throw new Error(erro.detail || 'Erro');
+                }
+                
+                iniciarTimer();
+                document.getElementById('resendBtn').classList.remove('active');
+                document.querySelectorAll('.code-input').forEach(i => i.value = '');
+                document.querySelector('.code-input[data-index="0"]').focus();
+                document.getElementById('codigoError').textContent = '';
+                mostrarToast('✅ Código reenviado!', 'success');
+            } catch (error) {
+                mostrarToast('❌ ' + error.message, 'error');
+            }
+        }
+
+        // ============================================
+        // TIMER
+        // ============================================
+        function iniciarTimer() {
+            tempoRestante = 60;
+            document.getElementById('timer').textContent = tempoRestante;
+            document.getElementById('resendBtn').classList.remove('active');
+            pararTimer();
+            timerInterval = setInterval(() => {
+                tempoRestante--;
+                document.getElementById('timer').textContent = tempoRestante;
+                if (tempoRestante <= 0) {
+                    pararTimer();
+                    document.getElementById('resendBtn').classList.add('active');
+                }
+            }, 1000);
+        }
+
+        function pararTimer() {
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+        }
+
+        // ============================================
+        // UTILITÁRIOS
+        // ============================================
+        function mostrarLoading(mostrar) {
+            let loader = document.getElementById('loadingOverlay');
+            if (mostrar) {
+                if (!loader) {
+                    loader = document.createElement('div');
+                    loader.id = 'loadingOverlay';
+                    loader.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:99999;';
+                    loader.innerHTML = '<div style="text-align:center;"><div style="width:50px;height:50px;border:4px solid #6C63FF;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div><p style="color:white;">Processando...</p></div>';
+                    document.body.appendChild(loader);
+                }
+            } else {
+                if (loader) loader.remove();
+            }
+        }
+
+        function mostrarToast(msg, tipo) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `position:fixed;top:20px;right:20px;background:${tipo==='success'?'#10B981':'#EF4444'};color:white;padding:16px 24px;border-radius:12px;z-index:99999;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,0.3);`;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 4000);
+        }
+
+        // Animação do loading
+        const styleEl = document.createElement('style');
+        styleEl.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+        document.head.appendChild(styleEl);
+    </script>
+</body>
+</html>
